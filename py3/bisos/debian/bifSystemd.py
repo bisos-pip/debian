@@ -483,6 +483,20 @@ class UserUnit(object):
         log.info(f"Disabling {self.serviceName}")
         self._systemctl(f"disable {self.serviceName}")
 
+####+BEGIN: b:py3:cs:method/typing :methodName "journalLogs" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /journalLogs/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def journalLogs(
+####+END:
+            self,
+    ):
+        log.info(f"Journal Logs {self.serviceName}")
+        if b.subProc.Op(outcome=None, log=1).bash(
+                f"""journalctl --user -u {self.serviceName} | tail -200""",
+        ).isProblematic():  return(None)
+
 
 ####+BEGIN: blee:bxPanel:foldingSection :outLevel 0 :sep nil :title "CSU" :anchor ""  :extraInfo "Command Services Section"
 """ #+begin_org
@@ -547,6 +561,9 @@ def examples_csuUserUnit(
     cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
 
     cmndName = "sysdUserUnit" ;  cmndArgs = "disable"
+    cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
+
+    cmndName = "sysdUserUnit" ;  cmndArgs = "journalLogs"
     cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
 
 
