@@ -230,28 +230,29 @@ class ConfigFile(abc.ABC):
 @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
 def examples_csu(
 ####+END:
-        concreteConfigFile: None,
+        concreteConfigFile: typing.AnyStr = "",
         sectionTitle: typing.AnyStr = "",
 ) -> None:
     """ #+begin_org
 ** [[elisp:(org-cycle)][| *DocStr | ] Examples of Service Access Instance Commands.
     #+end_org """
 
-    def cpsInit(): return collections.OrderedDict()
-    def menuItem(verbosity): cs.examples.cmndInsert(cmndName, cps, cmndArgs, verbosity=verbosity) # 'little' or 'none'
-    # def execLineEx(cmndStr): cs.examples.execInsert(execLine=cmndStr)
+    od = collections.OrderedDict
+    cmnd = cs.examples.cmndEnter
+    literal = cs.examples.execInsert
 
-    cs.examples.menuChapter('*Config Content*')
+    thisCls = getattr(__main__, str(concreteConfigFile))
+    filePath = getattr(thisCls, f"configFilePath")()
 
-    cmndName = "configFileStdout" ;  cmndArgs = ""
-    cps=cpsInit(); cps['cls'] = concreteConfigFile
-    menuItem(verbosity='none') ; menuItem(verbosity='full')
+    concreteConfigFilePars = od([('cls', concreteConfigFile),])
 
-    cmndName = "configFilePath" ;  cmndArgs = ""
-    cps=cpsInit(); cps['cls'] = concreteConfigFile ; menuItem(verbosity='none')
+    cs.examples.menuChapter(f'*Config Content {filePath}*')
 
-    cmndName = "configFileUpdate" ;  cmndArgs = ""
-    cps=cpsInit(); cps['cls'] = concreteConfigFile ; menuItem(verbosity='none')
+    cmnd('configFileStdout', pars=concreteConfigFilePars, comment=f" # That which will be stored in configFile")
+    cmnd('configFilePath', pars=concreteConfigFilePars, comment=f" # {filePath}")
+    cmnd('configFileUpdate', pars=concreteConfigFilePars, comment=f" # write stdout  to {filePath}")
+    cmnd('configFileShow', pars=concreteConfigFilePars, comment=f" # cat {filePath}")
+    cmnd('configFileVerify', pars=concreteConfigFilePars, comment=f" # are stdout and {filePath} the same")
 
 
 ####+BEGIN: blee:bxPanel:foldingSection :outLevel 0 :sep nil :title "CmndSvcs" :anchor ""  :extraInfo "File Parameters Get/Set -- Commands"

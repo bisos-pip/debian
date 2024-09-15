@@ -90,16 +90,16 @@ import collections
 import pathlib
 import __main__
 import os
-import abc
+# import abc
 
 import os
 import subprocess
 
+from bisos.basics import pyRunAs
+
 import logging
 
 log = logging.getLogger(__name__)
-
-from bisos.common import csParam
 
 ####+BEGIN: bx:cs:py3:section :title "Systemd Unit"
 """ #+begin_org
@@ -107,11 +107,13 @@ from bisos.common import csParam
 #+end_org """
 ####+END:
 
-####+BEGIN: b:py3:class/decl :className "SysUnit" :superClass "abc.ABC" :comment "Abstraction of Systemd Unit" :classType "abs"
+
+
+####+BEGIN: b:py3:class/decl :className "SysUnit" :superClass "" :comment "Systemd System Unit" :classType ""
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Cls-abs    [[elisp:(outline-show-subtree+toggle)][||]] /SysUnit/  superClass=abc.ABC =Abstraction of Systemd Unit=  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Cls-       [[elisp:(outline-show-subtree+toggle)][||]] /SysUnit/  superClass=object =Systemd System Unit=  [[elisp:(org-cycle)][| ]]
 #+end_org """
-class SysUnit(abc.ABC):
+class SysUnit(object):
 ####+END:
     """
 **
@@ -126,87 +128,129 @@ class SysUnit(abc.ABC):
             self,
             name,
             type="service",
-            content=None,
     ):
 
         self.name = name
-        self.service_name = "{name}.{type}".format(name=name, type=type)
-        self.service_file_path = os.path.join("/etc/systemd/system", self.service_name)
-        self.content = content
+        self.serviceName = f"{name}.{type}"
+        self.serviceFilePath()
 
-        try:
-            self._systemctl(['--help'])
-        except FileNotFoundError as e:
-            log.error("Unable to find systemctl!")
-            raise(e)
+        # try:
+        #     self._systemctl(['--help'])
+        # except FileNotFoundError as e:
+        #     log.error("Unable to find systemctl!")
+        #     raise(e)
         log.debug("Initialized systemd.Unit for '{name}' with type '{type}'".format(name=name, type=type))
 
-####+BEGIN: b:py3:cs:method/typing :methodName "content" :deco "property"
+
+####+BEGIN: b:py3:cs:method/typing :methodName "serviceFilePath" :deco "default"
     """ #+begin_org
-**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /content/  deco=property  [[elisp:(org-cycle)][| ]]
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /serviceFilePath/  deco=default  [[elisp:(org-cycle)][| ]]
     #+end_org """
-    @property
-    def content(
-####+END:
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def serviceFilePath(
+####+END
+            self,
+    ) -> pathlib.Path:
+        """ #+begin_org
+*** [[elisp:(org-cycle)][| DocStr| ]]  Look in control dir for file params.
+        #+end_org """
+        self._serviceFilePath = os.path.join("/etc/systemd/system", self.serviceName)
+        return pathlib.Path(f"{self._serviceFilePath}")
+
+####+BEGIN: b:py3:cs:method/typing :methodName "serviceFileVerify" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /serviceFileVerify/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def serviceFileVerify(
+####+END
             self,
     ):
-        return self._content
+        """ #+begin_org
+*** [[elisp:(org-cycle)][| DocStr| ]]  Look in control dir for file params.
+        #+end_org """
+        print(f"NOTYET, verify that serviceFilePath exists")
+        #return pathlib.Path(f"{self.serviceFilePath}")
 
-    @content.setter
-    def content(self, value):
-        self._content = value
-
-####+BEGIN: b:py3:cs:method/typing :methodName "invoke" :deco "abc.abstractmethod"
+####+BEGIN: b:py3:cs:method/typing :methodName "ensure" :deco "default"
     """ #+begin_org
-**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /invoke/  deco=abc.abstractmethod  [[elisp:(org-cycle)][| ]]
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /ensure/  deco=default  [[elisp:(org-cycle)][| ]]
     #+end_org """
-    @abc.abstractmethod
-    def invoke(
-####+END:
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def ensure(
+####+END
             self,
-            opName: str,
-            opParams: str,
+            restart=True,
+            enable=True,
     ):
-        """
-*** Look into rosmuSpec, subject opName to access control, then invoke
-        """
-        print(f"{opName}{opParams}")
 
-    def create_service_file(self):
-        log.info("Creating/updating service file for '{name}' at '{service_file_path}'".format(name=self.name, service_file_path=self.service_file_path))
-        with open(self.service_file_path, "w") as f:
-            f.write(self._content)
-
-
-    def ensure(self, restart=True, enable=True, content=None):
-        if content:
-            self.content = content
-        self.create_service_file()
+        self.serviceFileVerify()
         self.reload()
         if restart:
             self.restart()
         if enable:
             self.enable()
 
-    def remove(self):
+####+BEGIN: b:py3:cs:method/typing :methodName "remove" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /remove/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def remove(
+####+END
+            self,
+    ):
         try:
-            if os.path.exists(self.service_file_path):
+            if self._serviceFilePath.is_file():
                 self.stop()
                 self.disable()
         except subprocess.CalledProcessError:
             pass
 
-        log.info("Removing service file for {name} from {service_file_path}".format(name=self.name, service_file_path=self.service_file_path))
+        log.info(f"Removing service file for {self.name} from {self._serviceFilePath}")
         try:
-            os.remove(self.service_file_path)
+            self._serviceFilePath.unlink()
             log.debug("Successfully removed service file")
         except FileNotFoundError:
             log.debug("No service file found")
         self.reload()
 
-    def _systemctl(self, args, stderr=None):
+####+BEGIN: b:py3:cs:method/typing :methodName "_systemctl" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /_systemctl/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def _systemctl(
+####+END
+            self,
+            args,
+    ):
+        sudoSubCommands = [ "start", "stop", "restart",  "daemon-reload", "enable", "disable" ]
+        needsSudo = ""
+
+        sysdCmnd = args.split()[0]
+
+        if sysdCmnd in sudoSubCommands:
+            needsSudo = "sudo "
+
+        if b.subProc.Op(outcome=None, log=1).bash(
+                f"""{needsSudo}systemctl {args}""",
+        ).isProblematic():  return(None)
+
+
+####+BEGIN: b:py3:cs:method/typing :methodName "_systemctlOld" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /_systemctlOld/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def _systemctlOld(
+####+END
+            self,
+            args,
+            stderr=None,
+    ):
         try:
-            subprocess.check_output(["systemctl"] + args, stderr=stderr)
+            subprocess.check_output(["systemctl --user"] + args, stderr=stderr)
         except subprocess.CalledProcessError as e:
             log.warning("Failed to run systemctl with parameters {args}".format(args=args))
             if e.args[0] == 5:
@@ -218,37 +262,116 @@ class SysUnit(abc.ABC):
             else:
                 raise(e)
 
-####+BEGIN: b:py3:cs:method/typing :methodName "reload" :deco ""
+####+BEGIN: b:py3:cs:method/typing :methodName "reload" :deco "default"
     """ #+begin_org
-**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /reload/   [[elisp:(org-cycle)][| ]]
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /reload/  deco=default  [[elisp:(org-cycle)][| ]]
     #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
     def reload(
 ####+END:
             self,
     ):
         log.info("Reloading daemon files")
-        self._systemctl(["daemon-reload"])
+        self._systemctl("daemon-reload")
 
-    def restart(self):
-        log.info("Restarting {service_name}".format(service_name=self.service_name))
-        self._systemctl(["restart", self.service_name])
+####+BEGIN: b:py3:cs:method/typing :methodName "status" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /status/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def status(
+####+END:
+            self,
+    ):
+        log.info(f"Status {self.serviceName}")
+        self._systemctl(f"status {self.serviceName}")
 
-    def stop(self):
-        log.info("Stopping {service_name}".format(service_name=self.service_name))
-        self._systemctl(["stop", self.service_name], stderr=subprocess.DEVNULL)
 
-    def start(self):
-        log.info("Starting {service_name}".format(service_name=self.service_name))
-        self._systemctl(["start", self.service_name], stderr=subprocess.DEVNULL)
+####+BEGIN: b:py3:cs:method/typing :methodName "restart" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /restart/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def restart(
+####+END:
+            self,
+    ):
+        log.info(f"Restarting {self.serviceName}")
+        self._systemctl(f"restart {self.serviceName}")
 
-    def enable(self):
-        log.info("Enabling {service_name}".format(service_name=self.service_name))
-        self._systemctl(["enable", self.service_name])
+####+BEGIN: b:py3:cs:method/typing :methodName "stop" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /stop/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def stop(
+####+END:
+            self,
+    ):
+        log.info(f"Stopping {self.serviceName}")
+        self._systemctl(f"stop {self.serviceName}")
 
-    def disable(self):
-        log.info("Disabling {service_name}".format(service_name=self.service_name))
-        self._systemctl(["disable", self.service_name], stderr=subprocess.DEVNULL)
+####+BEGIN: b:py3:cs:method/typing :methodName "start" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /start/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def start(
+####+END:
+            self,
+    ):
+        log.info(f"Starting {self.serviceName}")
+        self._systemctl(f"start {self.serviceName}")
 
+####+BEGIN: b:py3:cs:method/typing :methodName "enable" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /enable/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def enable(
+####+END:
+            self,
+    ):
+        log.info(f"Enabling {self.serviceName}")
+        self._systemctl(f"enable {self.serviceName}")
+
+####+BEGIN: b:py3:cs:method/typing :methodName "disable" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /disable/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def disable(
+####+END:
+            self,
+    ):
+        log.info(f"Disabling {self.serviceName}")
+        self._systemctl(f"disable {self.serviceName}")
+
+####+BEGIN: b:py3:cs:method/typing :methodName "show" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /show/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def show(
+####+END:
+            self,
+    ):
+        log.info(f"Showing {self.serviceName}")
+        self._systemctl(f"show {self.serviceName}")
+
+####+BEGIN: b:py3:cs:method/typing :methodName "journalLogs" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /journalLogs/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def journalLogs(
+####+END:
+            self,
+    ):
+        log.info(f"Journal Logs {self.serviceName}")
+        if b.subProc.Op(outcome=None, log=1).bash(
+                f"""journalctl -u {self.serviceName} | tail -200""",
+        ).isProblematic():  return(None)
 
 
 ####+BEGIN: b:py3:class/decl :className "UserUnit" :superClass "" :comment "Systemd User Unit" :classType ""
@@ -567,12 +690,188 @@ def examples_csuUserUnit(
     cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
 
 
+####+BEGIN: b:py3:cs:func/typing :funcName "examples_csuSysUnit" :funcType "eType" :retType "" :deco "default" :argsList ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-eType  [[elisp:(outline-show-subtree+toggle)][||]] /examples_csuSysUnit/  deco=default  [[elisp:(org-cycle)][| ]]
+#+end_org """
+@cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+def examples_csuSysUnit(
+####+END:
+        userUnitInstanceName: typing.AnyStr = '',
+        sectionTitle: typing.AnyStr = '',
+) -> None:
+    """ #+begin_org
+** [[elisp:(org-cycle)][| *DocStr | ] Examples of Service Access Instance Commands.
+    #+end_org """
+
+
+    od = collections.OrderedDict
+    cmnd = cs.examples.cmndEnter
+    literal = cs.examples.execInsert
+
+    thisCls = getattr(__main__, userUnitInstanceName)
+    serviceName = getattr(thisCls, f"serviceName")
+
+
+    sysUnitNamePars = od([('cls', userUnitInstanceName),])
+    if sectionTitle == 'default':
+        cs.examples.menuChapter('*Remote Operations Management*')
+
+    cs.examples.menuChapter('*Systemd Unit Actions *')
+
+    cmnd('serviceFilePath', pars=sysUnitNamePars, comment=" # ")
+
+    cmnd('sysdSysUnit', pars=sysUnitNamePars, args='''serviceFileVerify''', comment=" # NOTYET")
+    cmnd('sysdSysUnit', pars=sysUnitNamePars, args='''ensure''', comment=" # fileVerify + reload + restart + enable")
+    cmnd('sysdSysUnit', pars=sysUnitNamePars, args='''remove''', comment=" # stop + disable + unlink")
+
+    cs.examples.menuChapter('*Systemctl Actions (sudo) *')
+
+    cmnd('sysdSysUnit', pars=sysUnitNamePars, args='''reload''', comment=f" # systemctl reload {serviceName}")
+    cmnd('sysdSysUnit', pars=sysUnitNamePars, args='''stop''', comment=f" # systemctl stop {serviceName}")
+    cmnd('sysdSysUnit', pars=sysUnitNamePars, args='''start''', comment=f" # systemctl start {serviceName}")
+    cmnd('sysdSysUnit', pars=sysUnitNamePars, args='''restart''', comment=f" # systemctl restart {serviceName}")
+    cmnd('sysdSysUnit', pars=sysUnitNamePars, args='''enable''', comment=f" # systemctl enable {serviceName}")
+    cmnd('sysdSysUnit', pars=sysUnitNamePars, args='''disable''', comment=f" # systemctl disable {serviceName}")
+
+    cs.examples.menuChapter('*Systemctl Information*')
+
+    cmnd('sysdSysUnit', pars=sysUnitNamePars, args='''status''', comment=f" # systemctl status {serviceName}")
+    cmnd('sysdSysUnit', pars=sysUnitNamePars, args='''show''', comment=f" # systemctl show {serviceName}")
+
+    cs.examples.menuChapter('*Journal Logs*')
+    
+    cmnd('sysdSysUnit', pars=sysUnitNamePars, args='''journalLogs''', comment=" # NOTYET")
+
+
+####+BEGIN: b:py3:cs:func/typing :funcName "examples_csuSysUnitObsoleted" :funcType "eType" :retType "" :deco "default" :argsList ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-eType  [[elisp:(outline-show-subtree+toggle)][||]] /examples_csuSysUnitObsoleted/  deco=default  [[elisp:(org-cycle)][| ]]
+#+end_org """
+@cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+def examples_csuSysUnitObsoleted(
+####+END:
+        userUnitInstanceName: typing.AnyStr = '',
+        sectionTitle: typing.AnyStr = '',
+) -> None:
+    """ #+begin_org
+** [[elisp:(org-cycle)][| *DocStr | ] Examples of Service Access Instance Commands.
+    #+end_org """
+
+    def cpsInit(): return collections.OrderedDict()
+    def menuItem(verbosity): cs.examples.cmndInsert(cmndName, cps, cmndArgs, verbosity=verbosity) # 'little' or 'none'
+
+    if sectionTitle == 'default':
+        cs.examples.menuChapter('*Remote Operations Management*')
+
+    cs.examples.menuChapter('*Systemd User Unit Actions*')
+
+    cmndName = "serviceFilePath" ;  cmndArgs = ""
+    cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
+
+    cmndName = "sysdSysUnit" ;  cmndArgs = "serviceFileVerify"
+    cps=cpsInit(); cps['cls'] = userUnitInstanceName
+    menuItem(verbosity='none') ; menuItem(verbosity='full')
+
+    cmndName = "sysdSysUnit" ;  cmndArgs = "ensure"
+    cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
+
+    cmndName = "sysdSysUnit" ;  cmndArgs = "remove"
+    cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
+
+    cs.examples.menuChapter('*Systemctl Actions*')
+
+    cmndName = "sysdSysUnit" ;  cmndArgs = "reload"
+    cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
+
+    cmndName = "sysdSysUnit" ;  cmndArgs = "status"
+    cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
+
+    cmndName = "sysdSysUnit" ;  cmndArgs = "restart"
+    cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
+
+    cmndName = "sysdSysUnit" ;  cmndArgs = "stop"
+    cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
+
+    cmndName = "sysdSysUnit" ;  cmndArgs = "start"
+    cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
+
+    cmndName = "sysdSysUnit" ;  cmndArgs = "enable"
+    cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
+
+    cmndName = "sysdSysUnit" ;  cmndArgs = "disable"
+    cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
+
+    cmndName = "sysdSysUnit" ;  cmndArgs = "journalLogs"
+    cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
+
+
 
 ####+BEGIN: blee:bxPanel:foldingSection :outLevel 0 :sep nil :title "CmndSvcs" :anchor ""  :extraInfo "File Parameters Get/Set -- Commands"
 """ #+begin_org
 *  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*     [[elisp:(outline-show-subtree+toggle)][| _CmndSvcs_: |]]  File Parameters Get/Set -- Commands  [[elisp:(org-shifttab)][<)]] E|
 #+end_org """
 ####+END:
+
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "sysdSysUnit" :extent "verify" :parsMand "cls" :parsOpt "" :argsMin 1 :argsMax 9999 :pyInv ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<sysdSysUnit>>  =verify= parsMand=cls argsMin=1 argsMax=9999 ro=cli   [[elisp:(org-cycle)][| ]]
+#+end_org """
+class sysdSysUnit(cs.Cmnd):
+    cmndParamsMandatory = [ 'cls', ]
+    cmndParamsOptional = [ ]
+    cmndArgsLen = {'Min': 1, 'Max': 9999,}
+
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmnd(self,
+             rtInv: cs.RtInvoker,
+             cmndOutcome: b.op.Outcome,
+             cls: typing.Optional[str]=None,  # Cs Mandatory Param
+             argsList: typing.Optional[list[str]]=None,  # CsArgs
+    ) -> b.op.Outcome:
+
+        failed = b_io.eh.badOutcome
+        callParamsDict = {'cls': cls, }
+        if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, argsList).isProblematic():
+            return failed(cmndOutcome)
+        cmndArgsSpecDict = self.cmndArgsSpec()
+        cls = csParam.mappedValue('cls', cls)
+####+END:
+        self.cmndDocStr(f""" #+begin_org
+** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
+        #+end_org """)
+
+        cmndArgsSpecDict = self.cmndArgsSpec()
+
+        action = self.cmndArgsGet("0", cmndArgsSpecDict, argsList)
+
+        print(f"Action {action}")
+
+        thisCls = getattr(__main__, cls)
+        getattr(thisCls, f"{action}")()
+
+        return cmndOutcome
+
+####+BEGIN: b:py3:cs:method/args :methodName "cmndArgsSpec" :methodType "anyOrNone" :retType "bool" :deco "default" :argsList "self"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-anyOrNone [[elisp:(outline-show-subtree+toggle)][||]] /cmndArgsSpec/ deco=default  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmndArgsSpec(self, ):
+####+END:
+        """  #+begin_org
+** [[elisp:(org-cycle)][| *cmndArgsSpec:* | ]]
+        #+end_org """
+        cmndArgsSpecDict = cs.arg.CmndArgsSpecDict()
+        cmndArgsSpecDict.argsDictAdd(
+            argPosition="0",
+            argName="action",
+            argChoices=['list', 'menu',],
+            argDescription="Action to be specified by each"
+        )
+
+        return cmndArgsSpecDict
+
 
 ####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "sysdUserUnit" :extent "verify" :parsMand "cls" :parsOpt "" :argsMin 1 :argsMax 9999 :pyInv ""
 """ #+begin_org

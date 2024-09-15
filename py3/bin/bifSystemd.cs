@@ -186,8 +186,8 @@ class examples(cs.Cmnd):
 
         bleep.examples_icmBasic()
 
-        qmailInject.examples_csu(sectionTitle="default")
-        qmailRemote.examples_csu(sectionTitle="default")
+        # qmailInject.examples_csu(sectionTitle="default")
+        # qmailRemote.examples_csu(sectionTitle="default")
 
         return(cmndOutcome)
 
