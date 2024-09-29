@@ -714,6 +714,7 @@ def examples_csuSysUnit(
 
 
     sysUnitNamePars = od([('cls', userUnitInstanceName),])
+
     if sectionTitle == 'default':
         cs.examples.menuChapter('*Remote Operations Management*')
 
@@ -743,6 +744,13 @@ def examples_csuSysUnit(
     
     cmnd('sysdSysUnit', pars=sysUnitNamePars, args='''journalLogs''', comment=" # NOTYET")
 
+    cs.examples.menuChapter('*Journal Logs -- Literal Commands*')
+
+    literal(f"journalctl --list-boots", comment=" # NOTYET")
+    literal(f"journalctl -b", comment=" # NOTYET")
+    literal(f"journalctl -u {serviceName} --since today", comment=" # NOTYET")
+    literal(f"journalctl -u {serviceName} -n 200", comment=" # tail -200")
+    literal(f"journalctl -u {serviceName} -f", comment=" # tail -f")
 
 ####+BEGIN: b:py3:cs:func/typing :funcName "examples_csuSysUnitObsoleted" :funcType "eType" :retType "" :deco "default" :argsList ""
 """ #+begin_org
@@ -866,7 +874,7 @@ class sysdSysUnit(cs.Cmnd):
         cmndArgsSpecDict.argsDictAdd(
             argPosition="0",
             argName="action",
-            argChoices=['list', 'menu',],
+            argChoices=[],
             argDescription="Action to be specified by each"
         )
 

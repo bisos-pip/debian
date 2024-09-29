@@ -37,6 +37,7 @@
 """ #+begin_org
 * *[[elisp:(org-cycle)][| Particulars-csInfo |]]*
 #+end_org """
+from enum import verify
 import typing
 csInfo: typing.Dict[str, typing.Any] = { 'moduleName': ['configFile'], }
 csInfo['version'] = '202305114855'
@@ -86,6 +87,8 @@ from bisos.common import csParam
 
 import collections
 ####+END:
+
+from bisos.basics import pyRunAs
 
 import pathlib
 import __main__
@@ -167,9 +170,10 @@ class ConfigFile(abc.ABC):
     def configFileUpdate(
 ####+END
             self,
+            runAs="user"
     ):
         """ #+begin_org
-*** [[elisp:(org-cycle)][| DocStr| ]]  Look in control dir for file params.
+*** [[elisp:(org-cycle)][| DocStr| ]]
         #+end_org """
 
         contentStr = self.configFileStr()
@@ -189,9 +193,59 @@ class ConfigFile(abc.ABC):
             self,
     ):
         """ #+begin_org
-*** [[elisp:(org-cycle)][| DocStr| ]]  Look in control dir for file params.
+*** [[elisp:(org-cycle)][| DocStr| ]]  
         #+end_org """
         # print _contentStr
+
+
+####+BEGIN: b:py3:cs:method/typing :methodName "configFileRead" :methodType "eType" :retType "" :deco "default" :argsList ""
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-eType [[elisp:(outline-show-subtree+toggle)][||]] /configFileRead/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def configFileRead(
+####+END
+            self,
+            runAs="user",
+    ):
+        """ #+begin_org
+*** [[elisp:(org-cycle)][| DocStr| ]]  Read in from configFilePath
+        #+end_org """
+
+        destPath = self.configFilePath()
+
+        if runAs == "user":
+            with open(destPath, "w") as thisFile:
+                result = thisFile.read()
+        elif runAs == "root":
+            result = pyRunAs.as_root_readFromFile(destPath)
+        else:
+            b_io.eh.problem_usageError(f"Bad runAs={runAs}")
+
+        return result
+
+####+BEGIN: b:py3:cs:method/typing :methodName "configFileVerify" :methodType "eType" :retType "" :deco "default" :argsList ""
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-eType [[elisp:(outline-show-subtree+toggle)][||]] /configFileVerify/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def configFileVerify(
+####+END
+            self,
+            runAs="user",
+    ):
+        """ #+begin_org
+*** [[elisp:(org-cycle)][| DocStr| ]]  Read in from configFilePath and verify that it is same as stdout.
+        #+end_org """
+
+        readStr = self.configFileRead()
+        contentStr = self.configFileStr(runAs=runAs)
+
+        if readStr == contentStr:
+            return True
+        else:
+            return False
+
 
 ####+BEGIN: b:py3:cs:method/typing :methodName "configFileDelete" :methodType "eType" :retType "" :deco "default" :argsList ""
     """ #+begin_org
@@ -201,11 +255,21 @@ class ConfigFile(abc.ABC):
     def configFileDelete(
 ####+END
             self,
+            runAs="user",
     ):
         """ #+begin_org
-*** [[elisp:(org-cycle)][| DocStr| ]]  Look in control dir for file params.
+*** [[elisp:(org-cycle)][| DocStr| ]]  Delete  configFilePath
         #+end_org """
-        # print _contentStr
+
+        destPath = self.configFilePath()
+
+        if runAs == "user":
+            destPath.unlink()
+        elif runAs == "root":
+            pyRunAs.as_root_deleteFile(destPath)
+        else:
+            b_io.eh.problem_usageError(f"Bad runAs={runAs}")
+
 
 ####+BEGIN: b:py3:cs:method/typing :methodName "configFileStdout" :deco "default"
     """ #+begin_org
@@ -221,6 +285,25 @@ class ConfigFile(abc.ABC):
         #+end_org """
         contentStr = self.configFileStr()
         print(contentStr)
+
+####+BEGIN: bx:dblock:python:func :funcName "commonParamsSpecify" :funcType "ParSpec" :retType "" :deco "" :argsList "csParams"
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-ParSpec  [[elisp:(outline-show-subtree+toggle)][||]] /commonParamsSpecify/ retType= argsList=(csParams)  [[elisp:(org-cycle)][| ]]
+#+end_org """
+def commonParamsSpecify(
+    csParams,
+):
+####+END:
+    csParams.parDictAdd(
+        parName='runAs',
+        parDescription="The user to run as. Typically one of user, root or bisos",
+        parDataType=None,
+        parDefault="user",
+        parChoices=["any"],
+        # parScope=icm.CmndParamScope.TargetParam,
+        argparseShortOpt=None,
+        argparseLongOpt='--runAs',
+    )
 
 
 ####+BEGIN: b:py3:cs:func/typing :funcName "examples_csu" :funcType "eType" :retType "" :deco "default" :argsList ""
@@ -245,14 +328,26 @@ def examples_csu(
     filePath = getattr(thisCls, f"configFilePath")()
 
     concreteConfigFilePars = od([('cls', concreteConfigFile),])
+    concreteConfigFileRootPars = od([('cls', concreteConfigFile), ('runAs', "root")])
 
     cs.examples.menuChapter(f'*Config Content {filePath}*')
 
     cmnd('configFileStdout', pars=concreteConfigFilePars, comment=f" # That which will be stored in configFile")
-    cmnd('configFilePath', pars=concreteConfigFilePars, comment=f" # {filePath}")
+
+    cmnd('configFilePath', pars=concreteConfigFilePars, comment=f" # ls -l {filePath}")
+    cmnd('configFilePath', pars=concreteConfigFileRootPars, comment=f" # sudo ls -l {filePath}")
+
     cmnd('configFileUpdate', pars=concreteConfigFilePars, comment=f" # write stdout  to {filePath}")
-    cmnd('configFileShow', pars=concreteConfigFilePars, comment=f" # cat {filePath}")
+    cmnd('configFileUpdate', pars=concreteConfigFileRootPars, comment=f" # write stdout  to {filePath}")
+
+    cmnd('configFileCat', pars=concreteConfigFilePars, comment=f" # cat {filePath}")
+    cmnd('configFileCat', pars=concreteConfigFileRootPars, comment=f" # sudo cat {filePath}")
+
     cmnd('configFileVerify', pars=concreteConfigFilePars, comment=f" # are stdout and {filePath} the same")
+    cmnd('configFileVerify', pars=concreteConfigFileRootPars, comment=f" # are stdout and {filePath} the same")
+
+    cmnd('configFileDelete', pars=concreteConfigFilePars, comment=f" # delete {filePath}")
+    cmnd('configFileDelete', pars=concreteConfigFileRootPars, comment=f" # sudo delete {filePath}")
 
 
 ####+BEGIN: blee:bxPanel:foldingSection :outLevel 0 :sep nil :title "CmndSvcs" :anchor ""  :extraInfo "File Parameters Get/Set -- Commands"
@@ -366,13 +461,13 @@ class configFileUpdate(cs.Cmnd):
 
         return cmndOutcome
 
-####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "configFileCat" :extent "verify" :parsMand "cls" :parsOpt "" :argsMin 0 :argsMax 0 :pyInv ""
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "configFileCat" :extent "verify" :parsMand "cls" :parsOpt "runAs" :argsMin 0 :argsMax 0 :pyInv ""
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<configFileCat>>  =verify= parsMand=cls ro=cli   [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<configFileCat>>  =verify= parsMand=cls parsOpt=runAs ro=cli   [[elisp:(org-cycle)][| ]]
 #+end_org """
 class configFileCat(cs.Cmnd):
     cmndParamsMandatory = [ 'cls', ]
-    cmndParamsOptional = [ ]
+    cmndParamsOptional = [ 'runAs', ]
     cmndArgsLen = {'Min': 0, 'Max': 0,}
 
     @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
@@ -380,24 +475,94 @@ class configFileCat(cs.Cmnd):
              rtInv: cs.RtInvoker,
              cmndOutcome: b.op.Outcome,
              cls: typing.Optional[str]=None,  # Cs Mandatory Param
+             runAs: typing.Optional[str]=None,  # Cs Optional Param
     ) -> b.op.Outcome:
 
-        callParamsDict = {'cls': cls, }
+        failed = b_io.eh.badOutcome
+        callParamsDict = {'cls': cls, 'runAs': runAs, }
         if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, None).isProblematic():
-            return b_io.eh.badOutcome(cmndOutcome)
+            return failed(cmndOutcome)
         cls = csParam.mappedValue('cls', cls)
+        runAs = csParam.mappedValue('runAs', runAs)
 ####+END:
         self.cmndDocStr(f""" #+begin_org
 ** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
         #+end_org """)
 
         thisCls = getattr(__main__, cls)
-        path = thisCls.configFilePath()
+        fileAsStr = thisCls.configFileRead(runAs=runAs)
 
-        print(f"NOTYET {path}")
+        print(fileAsStr)
 
         return cmndOutcome
 
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "configFileVerify" :extent "verify" :parsMand "cls" :parsOpt "runAs" :argsMin 0 :argsMax 0 :pyInv ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<configFileVerify>>  =verify= parsMand=cls parsOpt=runAs ro=cli   [[elisp:(org-cycle)][| ]]
+#+end_org """
+class configFileVerify(cs.Cmnd):
+    cmndParamsMandatory = [ 'cls', ]
+    cmndParamsOptional = [ 'runAs', ]
+    cmndArgsLen = {'Min': 0, 'Max': 0,}
+
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmnd(self,
+             rtInv: cs.RtInvoker,
+             cmndOutcome: b.op.Outcome,
+             cls: typing.Optional[str]=None,  # Cs Mandatory Param
+             runAs: typing.Optional[str]=None,  # Cs Optional Param
+    ) -> b.op.Outcome:
+
+        failed = b_io.eh.badOutcome
+        callParamsDict = {'cls': cls, 'runAs': runAs, }
+        if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, None).isProblematic():
+            return failed(cmndOutcome)
+        cls = csParam.mappedValue('cls', cls)
+        runAs = csParam.mappedValue('runAs', runAs)
+####+END:
+        self.cmndDocStr(f""" #+begin_org
+** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
+        #+end_org """)
+
+        thisCls = getattr(__main__, cls)
+        verify = thisCls.configFileVerify(runAs=runAs)
+
+        print(f"{verify}")
+
+        return cmndOutcome
+
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "configFileDelete" :extent "verify" :parsMand "cls" :parsOpt "runAs" :argsMin 0 :argsMax 0 :pyInv ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<configFileDelete>>  =verify= parsMand=cls parsOpt=runAs ro=cli   [[elisp:(org-cycle)][| ]]
+#+end_org """
+class configFileDelete(cs.Cmnd):
+    cmndParamsMandatory = [ 'cls', ]
+    cmndParamsOptional = [ 'runAs', ]
+    cmndArgsLen = {'Min': 0, 'Max': 0,}
+
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmnd(self,
+             rtInv: cs.RtInvoker,
+             cmndOutcome: b.op.Outcome,
+             cls: typing.Optional[str]=None,  # Cs Mandatory Param
+             runAs: typing.Optional[str]=None,  # Cs Optional Param
+    ) -> b.op.Outcome:
+
+        failed = b_io.eh.badOutcome
+        callParamsDict = {'cls': cls, 'runAs': runAs, }
+        if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, None).isProblematic():
+            return failed(cmndOutcome)
+        cls = csParam.mappedValue('cls', cls)
+        runAs = csParam.mappedValue('runAs', runAs)
+####+END:
+        self.cmndDocStr(f""" #+begin_org
+** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
+        #+end_org """)
+
+        thisCls = getattr(__main__, cls)
+        thisCls.configFileDelete(runAs=runAs)
+
+        return cmndOutcome
 
 
 ####+BEGIN: b:py3:cs:framework/endOfFile :basedOn "classification"
