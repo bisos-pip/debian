@@ -89,26 +89,30 @@ import collections
   (list
    "bisos.b.cs.ro"
    "blee.icmPlayer.bleep"
+   "bisos.b.clsMethod_csu"
+   "bisos.debian.configFile"
    "bisos.debian.systemdSeed"
    "bisos.debian.bifSystemd_csu"
  ))
 #+END_SRC
 #+RESULTS:
-| bisos.b.cs.ro | blee.icmPlayer.bleep | bisos.debian.systemdSeed | bisos.debian.bifSystemd_csu |
+| bisos.b.cs.ro | blee.icmPlayer.bleep | bisos.b.clsMethod_csu | bisos.debian.configFile | bisos.debian.systemdSeed | bisos.debian.bifSystemd_csu |
 #+end_org """
 
 ####+BEGIN: b:py3:cs:framework/csuListProc :pyImports t :csuImports t :csuParams t
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CsFrmWrk   [[elisp:(outline-show-subtree+toggle)][||]] =Process CSU List= with /4/ in csuList pyImports=t csuImports=t csuParams=t
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CsFrmWrk   [[elisp:(outline-show-subtree+toggle)][||]] =Process CSU List= with /6/ in csuList pyImports=t csuImports=t csuParams=t
 #+end_org """
 
 from bisos.b.cs import ro
 from blee.icmPlayer import bleep
+from bisos.b import clsMethod_csu
+from bisos.debian import configFile
 from bisos.debian import systemdSeed
 from bisos.debian import bifSystemd_csu
 
 
-csuList = [ 'bisos.b.cs.ro', 'blee.icmPlayer.bleep', 'bisos.debian.systemdSeed', 'bisos.debian.bifSystemd_csu', ]
+csuList = [ 'bisos.b.cs.ro', 'blee.icmPlayer.bleep', 'bisos.b.clsMethod_csu', 'bisos.debian.configFile', 'bisos.debian.systemdSeed', 'bisos.debian.bifSystemd_csu', ]
 
 g_importedCmndsModules = cs.csuList_importedModules(csuList)
 
@@ -119,10 +123,13 @@ def g_extraParams():
 
 ####+END:
 
-####+BEGIN: b:py3:cs:main/exposedSymbols :classes ()
+####+BEGIN: b:py3:cs:main/exposedSymbols :classes ("bifSystemd_csu.configFile_sysdUnit")
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CsFrmWrk   [[elisp:(outline-show-subtree+toggle)][||]] ~CS Controls and Exposed Symbols List Specification~ with /0/ in Classes List
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CsFrmWrk   [[elisp:(outline-show-subtree+toggle)][||]] ~CS Controls and Exposed Symbols List Specification~ with /1/ in Classes List
 #+end_org """
+
+configFile_sysdUnit = bifSystemd_csu.configFile_sysdUnit # exec/eval-ed as __main__.ClassName
+
 ####+END:
 
 cs.invOutcomeReportControl(cmnd=True, ro=True)
@@ -170,7 +177,7 @@ class examples(cs.Cmnd):
 
         bleep.examples_icmBasic()
 
-        bifSystemd_csu.examples_csuSysUnit()
+        bifSystemd_csu.examples_csu()
 
         # cs.examples.menuChapter('=ExecLine Example=  *Example Of Echo GPG Install Commands*')
 

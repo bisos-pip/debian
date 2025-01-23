@@ -17,36 +17,39 @@ from bisos import b
 
 from bisos.debian import systemdSeed
 
-
 def sysdUnitFileFunc():
-    outcome =  b.subProc.WOpW(invedBy=None, log=1).bash(
-        f"""
-(type -p wget >/dev/null || (sudo apt update && sudo apt-get install wget -y)) \
-	&& sudo mkdir -p -m 755 /etc/apt/keyrings \
-	&& wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
-	&& sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
-	&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-	&& sudo apt update \
-	&& sudo apt install gh -y
-""")
+    templateStr = """
+[Unit]
+Description=Facter Service
+Documentation=man:facter(1)
+
+[Service]
+ExecStart=/bisos/venv/py3/dev-bisos3/bin/roPerf-facter.cs -v 20 --svcName="svcFacter"  -i csPerformer
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=default.target
+"""
+    return templateStr
 
 
 systemdSeed.setup(
-    seedType="sysUnit",  # or userUnit
+    seedType="sysdSysUnit",  # or userUnit
     sysdUnitName="facter",
     sysdUnitFileFunc=sysdUnitFileFunc,
 )
 
 
-####+BEGIN: b:py3:cs:seed/withWhich :seedName "seedSystemd.cs"
+####+BEGIN: b:py3:cs:seed/withWhich :seedName "/bisos/git/auth/bxRepos/bisos-pip/debian/py3/bin/seedSystemd.cs"
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  seed       [[elisp:(outline-show-subtree+toggle)][||]] <<seedSystemd.cs>>   [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  seed       [[elisp:(outline-show-subtree+toggle)][||]] <</bisos/git/auth/bxRepos/bisos-pip/debian/py3/bin/seedSystemd.cs>>   [[elisp:(org-cycle)][| ]]
 #+end_org """
 import shutil
 import os
 import sys
 
-seedName = 'seedSystemd.cs'
+seedName = '/bisos/git/auth/bxRepos/bisos-pip/debian/py3/bin/seedSystemd.cs'
 seedPath = shutil.which(seedName)
 if seedPath is None:
     print(f'sys.exit() --- which found nothing for {seedName} --- Aborting')

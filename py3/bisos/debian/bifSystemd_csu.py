@@ -110,7 +110,6 @@ log = logging.getLogger(__name__)
 #+end_org """
 ####+END:
 
-
 ####+BEGIN: b:py3:class/decl :className "ConfigFile_sysdFacter" :superClass "configFile.ConfigFile" :comment "" :classType "basic"
 """ #+begin_org
 *  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Cls-basic  [[elisp:(outline-show-subtree+toggle)][||]] /ConfigFile_sysdFacter/  superClass=configFile.ConfigFile  [[elisp:(org-cycle)][| ]]
@@ -118,7 +117,7 @@ log = logging.getLogger(__name__)
 class ConfigFile_sysdUnit(configFile.ConfigFile):
 ####+END:
     """ #+begin_org
-** [[elisp:(org-cycle)][| DocStr| ]]  InMail Service Access Instance Class for an Accessible Abstract Service.
+** [[elisp:(org-cycle)][| DocStr| ]]
     #+end_org """
 
 ####+BEGIN: b:py3:cs:method/typing :methodName "configFilePath" :deco "default"
@@ -133,7 +132,7 @@ class ConfigFile_sysdUnit(configFile.ConfigFile):
         """ #+begin_org
 *** [[elisp:(org-cycle)][| DocStr| ]]  Return path NOTYET
         #+end_org """
-        serviceFilePath = sysdUnitFacter.serviceFilePath()
+        serviceFilePath = seedSysdUnit.serviceFilePath()
         return serviceFilePath
 
 ####+BEGIN: b:py3:cs:method/typing :methodName "configFileStr" :methodType "" :deco "default"
@@ -149,19 +148,11 @@ class ConfigFile_sysdUnit(configFile.ConfigFile):
 *** [[elisp:(org-cycle)][| DocStr| ]]  Returns string NOTYET
 ExecStart=/usr/bin/stdbuf -i0 -o0 -e0 /bisos/venv/py3/dev-bisos3/bin/roPerf-facter.cs -v 20 --svcName="svcFacter"  -i csPerformer
         #+end_org """
-        templateStr = """
-[Unit]
-Description=Facter Service
-Documentation=man:facter(1)
 
-[Service]
-ExecStart=/bisos/venv/py3/dev-bisos3/bin/roPerf-facter.cs -v 20 --svcName="svcFacter"  -i csPerformer
-Restart=always
-RestartSec=60
+        sysdUnitFileFunc = systemdSeed.systemdSeedInfo.sysdUnitFileFunc
 
-[Install]
-WantedBy=default.target
-"""
+        templateStr = sysdUnitFileFunc()
+
         return templateStr
 
 ####+BEGIN: b:py3:cs:method/typing :methodName "configFileUpdate" :methodType "eType" :retType "" :deco "default" :argsList ""
@@ -180,83 +171,17 @@ WantedBy=default.target
         contentStr = self.configFileStr()
         destPath = self.configFilePath()
 
-        pyRunAs.as_root_writeToFile(destPath, contentStr)
+        seedType = systemdSeed.systemdSeedInfo.seedType
+
+        if seedType == "sysdSysUnit":
+            pyRunAs.as_root_writeToFile(destPath, contentStr)
+        elif seedType == "sysdUserUnit":
+            print(f"NOTYET write as current user.")
+        else:
+            b_eh.badUsage(f"NOTYET:: bad seed type")
 
 
-
-
-####+BEGIN: b:py3:class/decl :className "ConfigFile_sysdFacter" :superClass "configFile.ConfigFile" :comment "" :classType "basic"
-""" #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Cls-basic  [[elisp:(outline-show-subtree+toggle)][||]] /ConfigFile_sysdFacter/  superClass=configFile.ConfigFile  [[elisp:(org-cycle)][| ]]
-#+end_org """
-class ConfigFile_sysdFacter(configFile.ConfigFile):
-####+END:
-    """ #+begin_org
-** [[elisp:(org-cycle)][| DocStr| ]]  InMail Service Access Instance Class for an Accessible Abstract Service.
-    #+end_org """
-
-####+BEGIN: b:py3:cs:method/typing :methodName "configFilePath" :deco "default"
-    """ #+begin_org
-**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /configFilePath/  deco=default  [[elisp:(org-cycle)][| ]]
-    #+end_org """
-    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
-    def configFilePath(
-####+END:
-            self,
-    ) -> pathlib.Path:
-        """ #+begin_org
-*** [[elisp:(org-cycle)][| DocStr| ]]  Return path NOTYET
-        #+end_org """
-        serviceFilePath = sysdUnitFacter.serviceFilePath()
-        return serviceFilePath
-
-####+BEGIN: b:py3:cs:method/typing :methodName "configFileStr" :methodType "" :deco "default"
-    """ #+begin_org
-**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /configFileStr/  deco=default  [[elisp:(org-cycle)][| ]]
-    #+end_org """
-    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
-    def configFileStr(
-####+END
-            self,
-    ) -> str:
-        """ #+begin_org
-*** [[elisp:(org-cycle)][| DocStr| ]]  Returns string NOTYET
-ExecStart=/usr/bin/stdbuf -i0 -o0 -e0 /bisos/venv/py3/dev-bisos3/bin/roPerf-facter.cs -v 20 --svcName="svcFacter"  -i csPerformer
-        #+end_org """
-        templateStr = """
-[Unit]
-Description=Facter Service
-Documentation=man:facter(1)
-
-[Service]
-ExecStart=/bisos/venv/py3/dev-bisos3/bin/roPerf-facter.cs -v 20 --svcName="svcFacter"  -i csPerformer
-Restart=always
-RestartSec=60
-
-[Install]
-WantedBy=default.target
-"""
-        return templateStr
-
-####+BEGIN: b:py3:cs:method/typing :methodName "configFileUpdate" :methodType "eType" :retType "" :deco "default" :argsList ""
-    """ #+begin_org
-**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-eType [[elisp:(outline-show-subtree+toggle)][||]] /configFileUpdate/  deco=default  [[elisp:(org-cycle)][| ]]
-    #+end_org """
-    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
-    def configFileUpdate(
-####+END
-            self,
-    ):
-        """ #+begin_org
-*** [[elisp:(org-cycle)][| DocStr| ]]  Look in control dir for file params.
-        #+end_org """
-
-        contentStr = self.configFileStr()
-        destPath = self.configFilePath()
-
-        pyRunAs.as_root_writeToFile(destPath, contentStr)
-
-
+configFile_sysdUnit = ConfigFile_sysdUnit()
 
 ####+BEGIN: b:py3:class/decl :className "SysUnit" :superClass "" :comment "Systemd System Unit" :classType ""
 """ #+begin_org
@@ -713,6 +638,67 @@ class UserUnit(object):
 ####+END:
 
 
+def makeSeedSysdUnit ():
+    """Either a SysdSys or a SysdUser instance."""
+    serviceName = systemdSeed.systemdSeedInfo.sysdUnitName
+    seedType = systemdSeed.systemdSeedInfo.seedType
+
+    result = None
+    if seedType == "sysdSysUnit":
+        result = SysUnit(serviceName)
+    elif seedType == "sysdUserUnit":
+        result = UserUnit(serviceName)
+    else:
+        b_eh.badUsage(f"NOTYET:: bad seed type")
+
+    return result
+
+seedSysdUnit = makeSeedSysdUnit()
+
+
+
+
+####+BEGIN: b:py3:cs:func/typing :funcName "examples_csu" :funcType "eType" :retType "" :deco "default" :argsList ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-eType  [[elisp:(outline-show-subtree+toggle)][||]] /examples_csu/  deco=default  [[elisp:(org-cycle)][| ]]
+#+end_org """
+@cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+def examples_csu(
+####+END:
+        userUnitInstanceName: typing.AnyStr = '',
+        sectionTitle: typing.AnyStr = '',
+) -> None:
+    """ #+begin_org
+** [[elisp:(org-cycle)][| *DocStr | ] Either a SysdSys or a SysdUser instance.
+    #+end_org """
+
+
+    od = collections.OrderedDict
+    cmnd = cs.examples.cmndEnter
+    literal = cs.examples.execInsert
+
+    if sectionTitle == 'default':
+        cs.examples.menuChapter('*Remote Operations Management*')
+
+    serviceName = systemdSeed.systemdSeedInfo.sysdUnitName
+
+    seedType = systemdSeed.systemdSeedInfo.seedType
+
+    configFile.examples_csu(concreteConfigFile='configFile_sysdUnit', sectionTitle="default")
+
+    if seedType == "sysdSysUnit":
+        examples_csuSysUnit()
+    elif seedType == "sysdUserUnit":
+        examples_csuUserUnit()
+    else:
+        b_eh.badUsage(f"NOTYET:: bad seed type")
+
+    cs.examples.menuChapter('*NOTYET Facter Daemon Full Update*')
+
+    # cmndName = "facterDaemonFullUpdate" ;  cmndArgs = ""
+    # cps=cpsInit(); menuItem(verbosity='none') ; menuItem(verbosity='full')
+
+
 ####+BEGIN: b:py3:cs:func/typing :funcName "examples_csuUserUnit" :funcType "eType" :retType "" :deco "default" :argsList ""
 """ #+begin_org
 *  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-eType  [[elisp:(outline-show-subtree+toggle)][||]] /examples_csuUserUnit/  deco=default  [[elisp:(org-cycle)][| ]]
@@ -857,7 +843,7 @@ class sysdSysUnit(cs.Cmnd):
 
         failed = b_io.eh.badOutcome
         callParamsDict = {}
-        if self.invocationValidate(rtInv, cmndOyutcome, callParamsDict, argsList).isProblematic():
+        if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, argsList).isProblematic():
             return failed(cmndOutcome)
         cmndArgsSpecDict = self.cmndArgsSpec()
 ####+END:
@@ -1001,6 +987,53 @@ class serviceFilePath(cs.Cmnd):
             opError=b.OpError.Success,
             opResults=path,
         )
+
+
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "facterDaemonFullUpdate" :extent "verify" :parsMand "" :parsOpt "" :argsMin 0 :argsMax 0 :pyInv ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<facterDaemonFullUpdate>>  =verify= ro=cli   [[elisp:(org-cycle)][| ]]
+#+end_org """
+class facterDaemonFullUpdate(cs.Cmnd):
+    cmndParamsMandatory = [ ]
+    cmndParamsOptional = [ ]
+    cmndArgsLen = {'Min': 0, 'Max': 0,}
+
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmnd(self,
+             rtInv: cs.RtInvoker,
+             cmndOutcome: b.op.Outcome,
+    ) -> b.op.Outcome:
+
+        callParamsDict = {}
+        if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, None).isProblematic():
+            return b_io.eh.badOutcome(cmndOutcome)
+####+END:
+        self.cmndDocStr(f""" #+begin_org
+** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
+        #+end_org """)
+
+        sysdConfigFacter.configFileUpdate()
+
+        path = sysdConfigFacter.configFilePath()
+
+        if rtInv.outs:
+            b_io.tm.here(f"configFilePath={path}")
+            if os.path.isfile(path):
+                if b.subProc.Op(outcome=cmndOutcome, log=1).bash(
+                        f"""ls -l {path}""",
+                ).isProblematic():  return(b_io.eh.badOutcome(cmndOutcome))
+            else:
+               print(f"""{path}""")
+
+        sysdUnitFacter.reload()  # to have systemd aware of the unit files
+
+        sysdUnitFacter.start()
+
+        return cmndOutcome.set(
+            opError=b.OpError.Success,
+            opResults=None,
+        )
+
 
 
 ####+BEGIN: b:py3:cs:framework/endOfFile :basedOn "classification"

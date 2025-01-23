@@ -69,6 +69,8 @@ requires = [
 
 scripts = [
 'bin/bifSystemd.cs',
+'bin/exmpl-systemd.cs',
+'bin/seedSystemd.cs',
 ]
 ####+END:
 

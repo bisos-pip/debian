@@ -11,7 +11,8 @@ Overview
 
 bisos.debian is a python package that uses the PyCS-Framework for
 interfacing with debain facilities (eg systemd). It is a
-BISOS-Capability and a Standalone-BISOS-Package.
+BISOS-Capability and a Standalone-BISOS-Package. Interfaces to Debian
+facilities such as systemd
 
 *bisos.debian* is based on PyCS-Foundation and can be used both as a
 Command and as a Service (invoke/perform model of remote operations)
