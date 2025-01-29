@@ -101,6 +101,7 @@ from bisos.debian import configFile
 from bisos.debian import systemdSeed
 
 import logging
+import sys
 
 log = logging.getLogger(__name__)
 
@@ -235,7 +236,16 @@ class SysUnit(object):
         """ #+begin_org
 *** [[elisp:(org-cycle)][| DocStr| ]]  Look in control dir for file params.
         #+end_org """
-        print(f"NOTYET, verify that serviceFilePath exists")
+
+        # print(f"NOTYET, verify that serviceFilePath exists")
+
+        myName = sys.argv[0]
+
+        if b.subProc.Op(outcome=None, log=1).bash(
+                f"""{myName}  --cls="configFile_sysdUnit" --runAs="root"  -i configFileUpdate""",
+        ).isProblematic():  return(None)
+
+
         #return pathlib.Path(f"{self.serviceFilePath}")
 
 ####+BEGIN: b:py3:cs:method/typing :methodName "ensure" :deco "default"
