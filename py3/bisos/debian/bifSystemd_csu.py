@@ -144,13 +144,17 @@ class ConfigFile_sysdUnit(configFile.ConfigFile):
     def configFileStr(
 ####+END
             self,
-    ) -> str:
+    ) -> str | None:
         """ #+begin_org
 *** [[elisp:(org-cycle)][| DocStr| ]]  Returns string NOTYET
 ExecStart=/usr/bin/stdbuf -i0 -o0 -e0 /bisos/venv/py3/dev-bisos3/bin/roPerf-facter.cs -v 20 --svcName="svcFacter"  -i csPerformer
         #+end_org """
 
         sysdUnitFileFunc = systemdSeed.systemdSeedInfo.sysdUnitFileFunc
+
+        if sysdUnitFileFunc is None:
+            print(f"EH_problem Missing systemdSeed.systemdSeedInfo.sysdUnitFileFunc")
+            return None
 
         templateStr = sysdUnitFileFunc()
 
@@ -175,6 +179,7 @@ ExecStart=/usr/bin/stdbuf -i0 -o0 -e0 /bisos/venv/py3/dev-bisos3/bin/roPerf-fact
         seedType = systemdSeed.systemdSeedInfo.seedType
 
         if seedType == "sysdSysUnit":
+            print(f"asRootWrite: destPath={destPath} -- contentStr={contentStr}")
             pyRunAs.as_root_writeToFile(destPath, contentStr)
         elif seedType == "sysdUserUnit":
             print(f"NOTYET write as current user.")
@@ -1014,9 +1019,10 @@ class facterDaemonFullUpdate(cs.Cmnd):
              cmndOutcome: b.op.Outcome,
     ) -> b.op.Outcome:
 
+        failed = b_io.eh.badOutcome
         callParamsDict = {}
         if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, None).isProblematic():
-            return b_io.eh.badOutcome(cmndOutcome)
+            return failed(cmndOutcome)
 ####+END:
         self.cmndDocStr(f""" #+begin_org
 ** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
