@@ -88,7 +88,7 @@ import collections
 (setq  b:py:cs:csuList
   (list
    "bisos.b.cs.ro"
-   "blee.icmPlayer.bleep"
+   "bisos.csPlayer.bleep"
    "bisos.b.clsMethod_csu"
    "bisos.debian.configFile"
    "bisos.debian.systemdSeed"
@@ -96,7 +96,7 @@ import collections
  ))
 #+END_SRC
 #+RESULTS:
-| bisos.b.cs.ro | blee.icmPlayer.bleep | bisos.b.clsMethod_csu | bisos.debian.configFile | bisos.debian.systemdSeed | bisos.debian.bifSystemd_csu |
+| bisos.b.cs.ro | bisos.csPlayer.bleep | bisos.b.clsMethod_csu | bisos.debian.configFile | bisos.debian.systemdSeed | bisos.debian.bifSystemd_csu |
 #+end_org """
 
 ####+BEGIN: b:py3:cs:framework/csuListProc :pyImports t :csuImports t :csuParams t
@@ -105,14 +105,14 @@ import collections
 #+end_org """
 
 from bisos.b.cs import ro
-from blee.icmPlayer import bleep
+from bisos.csPlayer import bleep
 from bisos.b import clsMethod_csu
 from bisos.debian import configFile
 from bisos.debian import systemdSeed
 from bisos.debian import bifSystemd_csu
 
 
-csuList = [ 'bisos.b.cs.ro', 'blee.icmPlayer.bleep', 'bisos.b.clsMethod_csu', 'bisos.debian.configFile', 'bisos.debian.systemdSeed', 'bisos.debian.bifSystemd_csu', ]
+csuList = [ 'bisos.b.cs.ro', 'bisos.csPlayer.bleep', 'bisos.b.clsMethod_csu', 'bisos.debian.configFile', 'bisos.debian.systemdSeed', 'bisos.debian.bifSystemd_csu', ]
 
 g_importedCmndsModules = cs.csuList_importedModules(csuList)
 
@@ -175,7 +175,7 @@ class examples(cs.Cmnd):
 
         cs.examples.commonBrief()
 
-        bleep.examples_icmBasic()
+        bleep.examples_csBasic()
 
         bifSystemd_csu.examples_csu()
 
