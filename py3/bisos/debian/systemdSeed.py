@@ -216,6 +216,26 @@ def setup(
     systemdSeedInfo.examplesHook  = examplesHook
 
 
+####+BEGIN: b:py3:cs:func/typing :funcName "plantWithWhich" :funcType "extTyped" :comment "expects seedSbom.cs" :deco "track"
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /plantWithWhich/  expects seedSbom.cs deco=track  [[elisp:(org-cycle)][| ]]
+#+end_org """
+@cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+def plantWithWhich(
+####+END:
+        asExpected: str,
+) -> None:
+    """ #+begin_org
+** [[elisp:(org-cycle)][| *DocStr | ] shim over b.importFile.plantWithWhich
+    #+end_org """
+
+    if asExpected != 'seedSystemd.cs':
+        b_io.pr(f"plantWithWhich Expected seedSystemd.cs Got: {asExpected}")
+        return
+
+    b.importFile.plantWithWhich('seedSystemd.cs')
+
+
 ####+BEGIN: b:py3:cs:framework/endOfFile :basedOn "classification"
 """ #+begin_org
 * [[elisp:(org-cycle)][| *End-Of-Editable-Text* |]] :: emacs and org variables and control parameters

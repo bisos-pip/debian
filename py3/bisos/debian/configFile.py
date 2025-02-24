@@ -92,6 +92,7 @@ from bisos.basics import pyRunAs
 
 import pathlib
 import __main__
+
 import os
 import abc
 
@@ -306,6 +307,7 @@ def commonParamsSpecify(
     )
 
 
+
 ####+BEGIN: b:py3:cs:func/typing :funcName "examples_csu" :funcType "eType" :retType "" :deco "default" :argsList ""
 """ #+begin_org
 *  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-eType  [[elisp:(outline-show-subtree+toggle)][||]] /examples_csu/  deco=default  [[elisp:(org-cycle)][| ]]
@@ -324,7 +326,10 @@ def examples_csu(
     cmnd = cs.examples.cmndEnter
     literal = cs.examples.execInsert
 
-    thisCls = getattr(__main__, str(concreteConfigFile))
+    # thisCls = getattr(__main__, str(concreteConfigFile))
+    from bisos.debian import bifSystemd_csu   # here, not no top -- otherwise circular
+    thisCls = getattr(bifSystemd_csu, str(concreteConfigFile))
+    # print(thisCls)
     filePath = getattr(thisCls, f"configFilePath")()
 
     concreteConfigFilePars = od([('cls', concreteConfigFile),])

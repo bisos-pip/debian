@@ -123,13 +123,12 @@ def g_extraParams():
 
 ####+END:
 
-####+BEGIN: b:py3:cs:main/exposedSymbols :classes ("bifSystemd_csu.configFile_sysdUnit")
+# OBSOLETED :classes ("bifSystemd_csu.configFile_sysdUnit")
+
+####+BEGIN: b:py3:cs:main/exposedSymbols :classes ()
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CsFrmWrk   [[elisp:(outline-show-subtree+toggle)][||]] ~CS Controls and Exposed Symbols List Specification~ with /1/ in Classes List
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CsFrmWrk   [[elisp:(outline-show-subtree+toggle)][||]] ~CS Controls and Exposed Symbols List Specification~ with /0/ in Classes List
 #+end_org """
-
-configFile_sysdUnit = bifSystemd_csu.configFile_sysdUnit # exec/eval-ed as __main__.ClassName
-
 ####+END:
 
 cs.invOutcomeReportControl(cmnd=True, ro=True)
@@ -172,9 +171,7 @@ class examples(cs.Cmnd):
         literal = cs.examples.execInsert
 
         cs.examples.myName(cs.G.icmMyName(), cs.G.icmMyFullName())
-
         cs.examples.commonBrief()
-
         bleep.examples_csBasic()
 
         bifSystemd_csu.examples_csu()
