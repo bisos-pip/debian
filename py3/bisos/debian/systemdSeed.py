@@ -81,6 +81,8 @@ from bisos.common import csParam
 import collections
 # ####+END:
 
+import atexit
+
 ####+BEGIN: bx:cs:py3:section :title "Public Classes"
 """ #+begin_org
 *  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  /Section/    [[elisp:(outline-show-subtree+toggle)][||]] *Public Classes*  [[elisp:(org-cycle)][| ]]
@@ -234,6 +236,21 @@ def plantWithWhich(
         return
 
     b.importFile.plantWithWhich('seedSystemd.cs')
+
+####+BEGIN: b:py3:cs:func/typing :funcName "atexit_plantWithWhich" :funcType "extTyped" :comment "expects seedSbom.cs" :deco "atexit.register"
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /atexit_plantWithWhich/  expects seedSbom.cs deco=atexit.register  [[elisp:(org-cycle)][| ]]
+#+end_org """
+@atexit.register
+def atexit_plantWithWhich(
+####+END:
+        asExpected: str="seedSystemd.cs",
+) -> None:
+    """ #+begin_org
+** [[elisp:(org-cycle)][| *DocStr | ] shim over b.importFile.plantWithWhich
+    #+end_org """
+
+    plantWithWhich(asExpected)
 
 
 ####+BEGIN: b:py3:cs:framework/endOfFile :basedOn "classification"
