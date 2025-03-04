@@ -307,24 +307,23 @@ def commonParamsSpecify(
     )
 
 
-####+BEGIN: b:py3:cs:func/typing :funcName "clsGet" :funcType "extTyped" :deco "track"
+####+BEGIN: b:py3:cs:func/typing :funcName "clsGet_Ok2Del" :funcType "extTyped" :deco "track"
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /clsGet/  deco=track  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /clsGet_Ok2Del/  deco=track  [[elisp:(org-cycle)][| ]]
 #+end_org """
 @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
-def clsGet(
+def clsGet_Ok2Del(
 ####+END:
-        cls: str,
+        arg1: str,
 ):
     """ #+begin_org
 ** [[elisp:(org-cycle)][| *DocStr | ]
     #+end_org """
-
+    
 
     #        thisCls = getattr(__main__, cls)
     from bisos.debian import bifSystemd_csu   # here, not no top -- otherwise circular
     thisCls = getattr(bifSystemd_csu, cls)
-    return thisCls
 
 
 ####+BEGIN: b:py3:cs:func/typing :funcName "examples_csu" :funcType "eType" :retType "" :deco "default" :argsList ""
@@ -345,10 +344,12 @@ def examples_csu(
     cmnd = cs.examples.cmndEnter
     literal = cs.examples.execInsert
 
-    # thisCls = getattr(__main__, str(concreteConfigFile))
-    from bisos.debian import bifSystemd_csu   # here, not no top -- otherwise circular
-    thisCls = getattr(bifSystemd_csu, str(concreteConfigFile))
+    thisCls = getattr(__main__, str(concreteConfigFile))
+
+    # from bisos.debian import bifSystemd_csu   # here, not no top -- otherwise circular
+    # thisCls = getattr(bifSystemd_csu, str(concreteConfigFile))
     # print(thisCls)
+
     filePath = getattr(thisCls, f"configFilePath")()
 
     concreteConfigFilePars = od([('cls', concreteConfigFile),])
@@ -405,7 +406,7 @@ class configFileStdout(cs.Cmnd):
 ** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
         #+end_org """)
 
-        thisCls = clsGet(cls)
+        thisCls = getattr(__main__, cls)
         thisCls.configFileStdout()
 
         return cmndOutcome
@@ -435,7 +436,7 @@ class configFilePath(cs.Cmnd):
 ** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
         #+end_org """)
 
-        thisCls = clsGet(cls)
+        thisCls = getattr(__main__, cls)
         path = thisCls.configFilePath()
 
         if rtInv.outs:
@@ -477,7 +478,7 @@ class configFileUpdate(cs.Cmnd):
 ** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
         #+end_org """)
 
-        thisCls = clsGet(cls)
+        thisCls = getattr(__main__, cls)
         thisCls.configFileUpdate()
 
         if rtInv.outs:
@@ -513,7 +514,7 @@ class configFileCat(cs.Cmnd):
 ** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
         #+end_org """)
 
-        thisCls = clsGet(cls)
+        thisCls = getattr(__main__, cls)
         fileAsStr = thisCls.configFileRead(runAs=runAs)
 
         print(fileAsStr)
@@ -548,7 +549,7 @@ class configFileVerify(cs.Cmnd):
 ** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
         #+end_org """)
 
-        thisCls = clsGet(cls)
+        thisCls = getattr(__main__, cls)
         verify = thisCls.configFileVerify(runAs=runAs)
 
         print(f"{verify}")
@@ -583,7 +584,7 @@ class configFileDelete(cs.Cmnd):
 ** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
         #+end_org """)
 
-        thisCls = clsGet(cls)
+        thisCls = getattr(__main__, cls)
         thisCls.configFileDelete(runAs=runAs)
 
         return cmndOutcome
