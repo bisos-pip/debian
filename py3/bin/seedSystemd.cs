@@ -29,7 +29,8 @@
 ####+BEGIN: b:prog:file/particulars :authors ("./inserts/authors-mb.org")
 """ #+begin_org
 * *[[elisp:(org-cycle)][| Particulars |]]* :: Authors, version
-** This File: /bisos/git/bxRepos/bisos-pip/binsprep/py3/bin/seedBinsPrep.cs
+** This File: /bisos/venv/py3/devbin/seedSystemd.cs
+** File True Name: /bisos/git/auth/bxRepos/bisos-pip/debian/py3/bin/seedSystemd.cs
 ** Authors: Mohsen BANAN, http://mohsen.banan.1.byname.net/contact
 #+end_org """
 ####+END:
