@@ -103,6 +103,8 @@ from bisos.debian import systemdSeed
 import logging
 import sys
 
+from bisos.b import cmndsSeed
+
 log = logging.getLogger(__name__)
 
 ####+BEGIN: bx:cs:py3:section :title "Systemd Unit"
@@ -839,6 +841,60 @@ def examples_csuSysUnit(
 *  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*     [[elisp:(outline-show-subtree+toggle)][| _CmndSvcs_: |]]  File Parameters Get/Set -- Commands  [[elisp:(org-shifttab)][<)]] E|
 #+end_org """
 ####+END:
+
+
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "examples" :extent "verify" :ro "noCli" :comment "FrameWrk: CS-Main-Examples" :parsMand "" :parsOpt "" :argsMin "0" :argsMax "0" :asFunc "" :interactiveP ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<examples>>  *FrameWrk: CS-Main-Examples*  =verify= argsMin=0 argsMax=0 ro=noCli   [[elisp:(org-cycle)][| ]]
+#+end_org """
+class examples(cs.Cmnd):
+    cmndParamsMandatory = [ ]
+    cmndParamsOptional = [ ]
+    cmndArgsLen = {'Min': 0, 'Max': 0,}
+    rtInvConstraints = cs.rtInvoker.RtInvoker.new_noRo() # NO RO From CLI
+
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmnd(self,
+             rtInv: cs.RtInvoker,
+             cmndOutcome: b.op.Outcome,
+             argsList: typing.Optional[list[str]]=None,  # CsArgs
+    ) -> b.op.Outcome:
+        """FrameWrk: CS-Main-Examples"""
+        failed = b_io.eh.badOutcome
+        callParamsDict = {}
+        if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, argsList).isProblematic():
+            return failed(cmndOutcome)
+        cmndArgsSpecDict = self.cmndArgsSpec()
+####+END:
+        self.cmndDocStr(f""" #+begin_org ***** [[elisp:(org-cycle)][| *CmndDesc:* | ]]  Conventional top level example.
+        #+end_org """)
+
+        od = collections.OrderedDict
+        cmnd = cs.examples.cmndEnter
+        literal = cs.examples.execInsert
+
+        cs.examples.myName(cs.G.icmMyName(), cs.G.icmMyFullName())
+        cs.examples.commonBrief()
+        # bleep.examples_csBasic()
+
+        examples_csu()
+
+        examplesFuncsList = cmndsSeed.cmndsSeedInfo.examplesFuncsList
+        if examplesFuncsList is not None:
+            for each in examplesFuncsList:
+                each()
+        else:
+            examplesCsu = cmndsSeed.examplesOfPlantedCsu()
+            if examplesCsu is not None:
+                examplesCsu()
+
+        # NOTYET
+        print(f"Planted with SEED={__file__}")
+
+        # b.ignore(ro.__doc__,  cmndArgsSpecDict)  # We are not using these modules, but they are auto imported.
+
+        return(cmndOutcome)
+
 
 ####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "sysdSysUnit" :extent "verify" :parsMand "" :parsOpt "" :argsMin 1 :argsMax 9999 :pyInv ""
 """ #+begin_org

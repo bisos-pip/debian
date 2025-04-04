@@ -217,10 +217,9 @@ def setup(
     systemdSeedInfo.sysdUnitFileFunc  = sysdUnitFileFunc
     systemdSeedInfo.examplesHook  = examplesHook
 
-
-####+BEGIN: b:py3:cs:func/typing :funcName "plantWithWhich" :funcType "extTyped" :comment "expects seedSbom.cs" :deco "track"
+####+BEGIN: b:py3:cs:func/typing :funcName "plantWithWhich" :funcType "extTyped" :comment "expects seedSystemd.cs" :deco "track"
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /plantWithWhich/  expects seedSbom.cs deco=track  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /plantWithWhich/  expects seedSystemd.cs deco=track  [[elisp:(org-cycle)][| ]]
 #+end_org """
 @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
 def plantWithWhich(
@@ -231,13 +230,15 @@ def plantWithWhich(
 ** [[elisp:(org-cycle)][| *DocStr | ] shim over b.importFile.plantWithWhich
     #+end_org """
 
-    if asExpected != 'seedSystemd.cs':
-        b_io.pr(f"plantWithWhich Expected seedSystemd.cs Got: {asExpected}")
+    expected = 'seedSystemd.cs'
+
+    if asExpected != expected:
+        b_io.pr(f"plantWithWhich:: Expected {expected} Got: {asExpected}")
         return
 
-    b.importFile.plantWithWhich('seedSystemd.cs')
+    b.importFile.plantWithWhich(expected)
 
-####+BEGIN: b:py3:cs:func/typing :funcName "atexit_plantWithWhich" :funcType "extTyped" :comment "expects seedSbom.cs" :deco "atexit.register"
+####+BEGIN: b:py3:cs:func/typing :funcName "atexit_plantWithWhich" :funcType "extTyped" :comment "expects seedSystemd.cs" :deco "atexit.register"
 """ #+begin_org
 *  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /atexit_plantWithWhich/  expects seedSbom.cs deco=atexit.register  [[elisp:(org-cycle)][| ]]
 #+end_org """
