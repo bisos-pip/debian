@@ -113,9 +113,9 @@ log = logging.getLogger(__name__)
 #+end_org """
 ####+END:
 
-####+BEGIN: b:py3:class/decl :className "ConfigFile_sysdFacter" :superClass "configFile.ConfigFile" :comment "" :classType "basic"
+####+BEGIN: b:py3:class/decl :className "ConfigFile_sysdUnit" :superClass "configFile.ConfigFile" :comment "" :classType "basic"
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Cls-basic  [[elisp:(outline-show-subtree+toggle)][||]] /ConfigFile_sysdFacter/  superClass=configFile.ConfigFile  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Cls-basic  [[elisp:(outline-show-subtree+toggle)][||]] /ConfigFile_sysdUnit/  superClass=configFile.ConfigFile  [[elisp:(org-cycle)][| ]]
 #+end_org """
 class ConfigFile_sysdUnit(configFile.ConfigFile):
 ####+END:
@@ -671,8 +671,6 @@ def makeSeedSysdUnit ():
     return result
 
 seedSysdUnit = makeSeedSysdUnit()
-
-
 
 
 ####+BEGIN: b:py3:cs:func/typing :funcName "examples_csu" :funcType "eType" :retType "" :deco "default" :argsList ""
