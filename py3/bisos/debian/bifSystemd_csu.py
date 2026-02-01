@@ -98,7 +98,9 @@ import subprocess
 from bisos.basics import pyRunAs
 
 from bisos.debian import configFile
-from bisos.debian import systemdSeed
+
+if b.cs.G.plantOfThisSeed is not None:
+    from bisos.debian import systemdSeed
 
 import logging
 import sys
@@ -188,8 +190,8 @@ ExecStart=/usr/bin/stdbuf -i0 -o0 -e0 /bisos/venv/py3/dev-bisos3/bin/roPerf-fact
         else:
             b_eh.badUsage(f"NOTYET:: bad seed type")
 
-
-configFile_sysdUnit = ConfigFile_sysdUnit()
+if b.cs.G.plantOfThisSeed is not None:
+    configFile_sysdUnit = ConfigFile_sysdUnit()
 
 ####+BEGIN: b:py3:class/decl :className "SysUnit" :superClass "" :comment "Systemd System Unit" :classType ""
 """ #+begin_org
@@ -666,11 +668,13 @@ def makeSeedSysdUnit ():
     elif seedType == "sysdUserUnit":
         result = UserUnit(serviceName)
     else:
-        b_eh.badUsage(f"NOTYET:: bad seed type")
+        # b_eh.badUsage(f"NOTYET:: bad seed type")
+        print(f"NOTYET:: bad seed type")
 
     return result
 
-seedSysdUnit = makeSeedSysdUnit()
+if b.cs.G.plantOfThisSeed is not None:
+    seedSysdUnit = makeSeedSysdUnit()
 
 
 ####+BEGIN: b:py3:cs:func/typing :funcName "examples_csu" :funcType "eType" :retType "" :deco "default" :argsList ""
@@ -694,6 +698,10 @@ def examples_csu(
 
     if sectionTitle == 'default':
         cs.examples.menuChapter('*Remote Operations Management*')
+
+    if b.cs.G.plantOfThisSeed is None:
+        print(f"Seed Execution, Not Planted, Examples Skipped")
+        return
 
     serviceName = systemdSeed.systemdSeedInfo.sysdUnitName
 
@@ -875,19 +883,22 @@ class examples(cs.Cmnd):
         cs.examples.commonBrief()
         # bleep.examples_csBasic()
 
-        examples_csu()
-
-        examplesFuncsList = cmndsSeed.cmndsSeedInfo.examplesFuncsList
-        if examplesFuncsList is not None:
-            for each in examplesFuncsList:
-                each()
+        if b.cs.G.plantOfThisSeed is None:
+            print(f"UnPlanted, the SEED={__file__}")
         else:
-            examplesCsu = cmndsSeed.examplesOfPlantedCsu()
-            if examplesCsu is not None:
-                examplesCsu()
+            examples_csu()
 
-        # NOTYET
-        print(f"Planted with SEED={__file__}")
+            examplesFuncsList = cmndsSeed.cmndsSeedInfo.examplesFuncsList
+            if examplesFuncsList is not None:
+                for each in examplesFuncsList:
+                    each()
+            else:
+                examplesCsu = cmndsSeed.examplesOfPlantedCsu()
+                if examplesCsu is not None:
+                    examplesCsu()
+
+            # NOTYET
+            print(f"Planted with SEED={__file__}")
 
         # b.ignore(ro.__doc__,  cmndArgsSpecDict)  # We are not using these modules, but they are auto imported.
 
