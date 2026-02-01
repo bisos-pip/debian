@@ -144,8 +144,8 @@ def g_extraParams():
 *  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CsFrmWrk   [[elisp:(outline-show-subtree+toggle)][||]] ~CS Controls and Exposed Symbols List Specification~ with /1/ in Classes List
 #+end_org """
 
-if b.cs.G.plantOfThisSeed is not None:
-    configFile_sysdUnit = bifSystemd_csu.configFile_sysdUnit # exec/eval-ed as __main__.ClassName
+# if b.cs.G.plantOfThisSeed is not None:
+configFile_sysdUnit = bifSystemd_csu.configFile_sysdUnit # exec/eval-ed as __main__.ClassName
 
 ####+END:
 

@@ -1,7 +1,8 @@
+#   "bisos.csPlayer.csxuFps_csu"
 # -*- coding: utf-8 -*-
 
 """ #+begin_org
-* ~[Summary]~ :: A =CS-Lib= for Managing RO (Remote Operation) Control File Parameters as a ClsFp
+* ~[Summary]~ :: A =CS-Lib=  As a BISOS Interface (bif) to Debian Systemd
 #+end_org """
 
 ####+BEGIN: b:py3:cs:file/dblockControls :classification "cs-u"
@@ -99,8 +100,8 @@ from bisos.basics import pyRunAs
 
 from bisos.debian import configFile
 
-if b.cs.G.plantOfThisSeed is not None:
-    from bisos.debian import systemdSeed
+
+from bisos.debian import systemd_seedInfo
 
 import logging
 import sys
@@ -154,10 +155,10 @@ class ConfigFile_sysdUnit(configFile.ConfigFile):
 ExecStart=/usr/bin/stdbuf -i0 -o0 -e0 /bisos/venv/py3/dev-bisos3/bin/roPerf-facter.cs -v 20 --svcName="svcFacter"  -i csPerformer
         #+end_org """
 
-        sysdUnitFileFunc = systemdSeed.systemdSeedInfo.sysdUnitFileFunc
+        sysdUnitFileFunc = systemd_seedInfo.systemdSeedInfo.sysdUnitFileFunc
 
         if sysdUnitFileFunc is None:
-            print(f"EH_problem Missing systemdSeed.systemdSeedInfo.sysdUnitFileFunc")
+            print(f"EH_problem Missing systemd_seedInfo.systemdSeedInfo.sysdUnitFileFunc")
             return None
 
         templateStr = sysdUnitFileFunc()
@@ -180,7 +181,7 @@ ExecStart=/usr/bin/stdbuf -i0 -o0 -e0 /bisos/venv/py3/dev-bisos3/bin/roPerf-fact
         contentStr = self.configFileStr()
         destPath = self.configFilePath()
 
-        seedType = systemdSeed.systemdSeedInfo.seedType
+        seedType = systemd_seedInfo.systemdSeedInfo.seedType
 
         if seedType == "sysdSysUnit":
             print(f"asRootWrite: destPath={destPath} -- contentStr={contentStr}")
@@ -190,8 +191,8 @@ ExecStart=/usr/bin/stdbuf -i0 -o0 -e0 /bisos/venv/py3/dev-bisos3/bin/roPerf-fact
         else:
             b_eh.badUsage(f"NOTYET:: bad seed type")
 
-if b.cs.G.plantOfThisSeed is not None:
-    configFile_sysdUnit = ConfigFile_sysdUnit()
+# if b.cs.G.plantOfThisSeed is not None:
+configFile_sysdUnit = ConfigFile_sysdUnit()
 
 ####+BEGIN: b:py3:class/decl :className "SysUnit" :superClass "" :comment "Systemd System Unit" :classType ""
 """ #+begin_org
@@ -650,6 +651,249 @@ class UserUnit(object):
         ).isProblematic():  return(None)
 
 
+####+BEGIN: b:py3:class/decl :className "SocketUnit" :superClass "" :comment "Systemd System Unit" :classType ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Cls-       [[elisp:(outline-show-subtree+toggle)][||]] /SocketUnit/  superClass=object =Systemd System Unit=  [[elisp:(org-cycle)][| ]]
+#+end_org """
+class SocketUnit(object):
+####+END:
+    """
+**
+"""
+####+BEGIN: b:py3:cs:method/typing :methodName "__init__" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /__init__/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def __init__(
+####+END:
+            self,
+            name,
+            type="socket",
+    ):
+
+        self.name = name
+        self.serviceName = f"{name}.{type}"
+        self.serviceFilePath()
+
+####+BEGIN: b:py3:cs:method/typing :methodName "serviceFilePath" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /serviceFilePath/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def serviceFilePath(
+####+END
+            self,
+    ) -> pathlib.Path:
+        """ #+begin_org
+*** [[elisp:(org-cycle)][| DocStr| ]]  Look in control dir for file params.
+        #+end_org """
+        self._serviceFilePath = os.path.join("/etc/systemd/system", self.serviceName)
+        return pathlib.Path(f"{self._serviceFilePath}")
+
+####+BEGIN: b:py3:cs:method/typing :methodName "serviceFileVerify" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /serviceFileVerify/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def serviceFileVerify(
+####+END
+            self,
+    ):
+        """ #+begin_org
+*** [[elisp:(org-cycle)][| DocStr| ]]  Look in control dir for file params.
+        #+end_org """
+
+        # print(f"NOTYET, verify that serviceFilePath exists")
+
+        myName = sys.argv[0]
+
+        if b.subProc.Op(outcome=None, log=1).bash(
+                f"""{myName}  --cls="configFile_sysdUnit" --runAs="root"  -i configFileUpdate""",
+        ).isProblematic():  return(None)
+
+
+        #return pathlib.Path(f"{self.serviceFilePath}")
+
+####+BEGIN: b:py3:cs:method/typing :methodName "ensure" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /ensure/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def ensure(
+####+END
+            self,
+            restart=True,
+            enable=True,
+    ):
+
+        self.serviceFileVerify()
+        self.reload()
+        if restart:
+            self.restart()
+        if enable:
+            self.enable()
+
+####+BEGIN: b:py3:cs:method/typing :methodName "remove" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /remove/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def remove(
+####+END
+            self,
+    ):
+        try:
+            if self._serviceFilePath.is_file():
+                self.stop()
+                self.disable()
+        except subprocess.CalledProcessError:
+            pass
+
+        log.info(f"Removing service file for {self.name} from {self._serviceFilePath}")
+        try:
+            self._serviceFilePath.unlink()
+            log.debug("Successfully removed service file")
+        except FileNotFoundError:
+            log.debug("No service file found")
+        self.reload()
+
+####+BEGIN: b:py3:cs:method/typing :methodName "_systemctl" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /_systemctl/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def _systemctl(
+####+END
+            self,
+            args,
+    ):
+        sudoSubCommands = [ "start", "stop", "restart",  "daemon-reload", "enable", "disable" ]
+        needsSudo = ""
+
+        sysdCmnd = args.split()[0]
+
+        if sysdCmnd in sudoSubCommands:
+            needsSudo = "sudo "
+
+        if b.subProc.Op(outcome=None, log=1).bash(
+                f"""{needsSudo}systemctl {args}""",
+        ).isProblematic():  return(None)
+
+
+####+BEGIN: b:py3:cs:method/typing :methodName "reload" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /reload/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def reload(
+####+END:
+            self,
+    ):
+        log.info("Reloading daemon files")
+        self._systemctl("daemon-reload")
+
+####+BEGIN: b:py3:cs:method/typing :methodName "status" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /status/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def status(
+####+END:
+            self,
+    ):
+        log.info(f"Status {self.serviceName}")
+        self._systemctl(f"status {self.serviceName}")
+
+
+####+BEGIN: b:py3:cs:method/typing :methodName "restart" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /restart/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def restart(
+####+END:
+            self,
+    ):
+        log.info(f"Restarting {self.serviceName}")
+        self._systemctl(f"restart {self.serviceName}")
+
+####+BEGIN: b:py3:cs:method/typing :methodName "stop" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /stop/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def stop(
+####+END:
+            self,
+    ):
+        log.info(f"Stopping {self.serviceName}")
+        self._systemctl(f"stop {self.serviceName}")
+
+####+BEGIN: b:py3:cs:method/typing :methodName "start" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /start/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def start(
+####+END:
+            self,
+    ):
+        log.info(f"Starting {self.serviceName}")
+        self._systemctl(f"start {self.serviceName}")
+
+####+BEGIN: b:py3:cs:method/typing :methodName "enable" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /enable/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def enable(
+####+END:
+            self,
+    ):
+        log.info(f"Enabling {self.serviceName}")
+        self._systemctl(f"enable {self.serviceName}")
+
+####+BEGIN: b:py3:cs:method/typing :methodName "disable" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /disable/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def disable(
+####+END:
+            self,
+    ):
+        log.info(f"Disabling {self.serviceName}")
+        self._systemctl(f"disable {self.serviceName}")
+
+####+BEGIN: b:py3:cs:method/typing :methodName "show" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /show/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def show(
+####+END:
+            self,
+    ):
+        log.info(f"Showing {self.serviceName}")
+        self._systemctl(f"show {self.serviceName}")
+
+####+BEGIN: b:py3:cs:method/typing :methodName "journalLogs" :deco "default"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-     [[elisp:(outline-show-subtree+toggle)][||]] /journalLogs/  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def journalLogs(
+####+END:
+            self,
+    ):
+        log.info(f"Journal Logs {self.serviceName}")
+        if b.subProc.Op(outcome=None, log=1).bash(
+                f"""journalctl -u {self.serviceName} | tail -200""",
+        ).isProblematic():  return(None)
+
+
+
 ####+BEGIN: blee:bxPanel:foldingSection :outLevel 0 :sep nil :title "CSU" :anchor ""  :extraInfo "Command Services Section"
 """ #+begin_org
 *  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*     [[elisp:(outline-show-subtree+toggle)][| _CSU_: |]]  Command Services Section  [[elisp:(org-shifttab)][<)]] E|
@@ -659,8 +903,8 @@ class UserUnit(object):
 
 def makeSeedSysdUnit ():
     """Either a SysdSys or a SysdUser instance."""
-    serviceName = systemdSeed.systemdSeedInfo.sysdUnitName
-    seedType = systemdSeed.systemdSeedInfo.seedType
+    serviceName = systemd_seedInfo.systemdSeedInfo.sysdUnitName
+    seedType = systemd_seedInfo.systemdSeedInfo.seedType
 
     result = None
     if seedType == "sysdSysUnit":
@@ -673,8 +917,8 @@ def makeSeedSysdUnit ():
 
     return result
 
-if b.cs.G.plantOfThisSeed is not None:
-    seedSysdUnit = makeSeedSysdUnit()
+# if b.cs.G.plantOfThisSeed is not None:
+seedSysdUnit = makeSeedSysdUnit()
 
 
 ####+BEGIN: b:py3:cs:func/typing :funcName "examples_csu" :funcType "eType" :retType "" :deco "default" :argsList ""
@@ -703,9 +947,9 @@ def examples_csu(
         print(f"Seed Execution, Not Planted, Examples Skipped")
         return
 
-    serviceName = systemdSeed.systemdSeedInfo.sysdUnitName
+    serviceName = systemd_seedInfo.systemdSeedInfo.sysdUnitName
 
-    seedType = systemdSeed.systemdSeedInfo.seedType
+    seedType = systemd_seedInfo.systemdSeedInfo.seedType
 
     configFile.examples_csu(concreteConfigFile='configFile_sysdUnit', sectionTitle="default")
 
@@ -806,7 +1050,7 @@ def examples_csuSysUnit(
     if sectionTitle == 'default':
         cs.examples.menuChapter('*Remote Operations Management*')
 
-    serviceName = systemdSeed.systemdSeedInfo.sysdUnitName
+    serviceName = systemd_seedInfo.systemdSeedInfo.sysdUnitName
 
     cs.examples.menuChapter('*Systemd Unit Actions *')
 
@@ -884,7 +1128,8 @@ class examples(cs.Cmnd):
         # bleep.examples_csBasic()
 
         if b.cs.G.plantOfThisSeed is None:
-            print(f"UnPlanted, the SEED={__file__}")
+            # print(f"UnPlanted, the SEED={__file__}")
+            examples_csu()
         else:
             examples_csu()
 
@@ -937,7 +1182,7 @@ class sysdSysUnit(cs.Cmnd):
 
         print(f"Action {action}")
 
-        serviceName = systemdSeed.systemdSeedInfo.sysdUnitName
+        serviceName = systemd_seedInfo.systemdSeedInfo.sysdUnitName
 
         thisCls = SysUnit(serviceName)
 
@@ -1050,7 +1295,7 @@ class serviceFilePath(cs.Cmnd):
 ** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
         #+end_org """)
 
-        serviceName = systemdSeed.systemdSeedInfo.sysdUnitName
+        serviceName = systemd_seedInfo.systemdSeedInfo.sysdUnitName
 
         thisCls = SysUnit(serviceName)
         path = thisCls.serviceFilePath()

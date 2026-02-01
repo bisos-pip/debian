@@ -85,7 +85,7 @@ import atexit
 
 from bisos.b import cmndsSeed
 
-seedCSMU = 'seedSocketSystemd.cs'
+seedCSXU = 'seedSystemd.cs'
 
 ####+BEGIN: b:py3:cs:func/typing :funcName "atexit_plantWithWhich" :funcType "extTyped" :comment "expects seedGraphviz.cs" :deco "atexit.register"
 """ #+begin_org
@@ -94,7 +94,7 @@ seedCSMU = 'seedSocketSystemd.cs'
 @atexit.register
 def atexit_plantWithWhich(
 ####+END:
-        asExpected: str=seedCSMU,
+        asExpected: str=seedCSXU,
 ) -> None:
     """ #+begin_org
 ** [[elisp:(org-cycle)][| *DocStr | ] shim over b.importFile.plantWithWhich

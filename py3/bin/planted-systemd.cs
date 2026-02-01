@@ -15,7 +15,8 @@
 
 from bisos import b
 
-from bisos.debian import systemdSeed
+from bisos.debian import systemd_seedInfo
+from bisos.debian import systemd_seed
 
 def sysdUnitFileFunc():
     templateStr = """
@@ -34,7 +35,7 @@ WantedBy=default.target
     return templateStr
 
 
-systemdSeed.setup(
+systemd_seedInfo.setup(
     seedType="sysdSysUnit",  # or userUnit
     sysdUnitName="facter",
     sysdUnitFileFunc=sysdUnitFileFunc,

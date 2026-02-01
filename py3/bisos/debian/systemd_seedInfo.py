@@ -69,7 +69,7 @@ Module description comes here.
 #+end_org """
 ####+END:
 
-#####+BEGIN: b:py3:cs:framework/imports :basedOn "classification"
+# ####+BEGIN: b:py3:cs:framework/imports :basedOn "classification"
 """ #+begin_org
 *  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CsFrmWrk   [[elisp:(outline-show-subtree+toggle)][||]] *Imports* =Based on Classification=cs-u=
 #+end_org """
@@ -79,8 +79,7 @@ from bisos.b import b_io
 from bisos.common import csParam
 
 import collections
-#####+END:
-
+# ####+END:
 
 ####+BEGIN: bx:cs:py3:section :title "Public Classes"
 """ #+begin_org
@@ -89,11 +88,11 @@ import collections
 ####+END:
 
 
-####+BEGIN: b:py3:class/decl :className "SocketSystemdSeedInfo" :superClass "object" :comment "Abstraction of a  Interface" :classType "basic"
+####+BEGIN: b:py3:class/decl :className "SystemdSeedInfo" :superClass "object" :comment "Abstraction of a  Interface" :classType "basic"
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Cls-basic  [[elisp:(outline-show-subtree+toggle)][||]] /SocketSystemdSeedInfo/  superClass=object =Abstraction of a  Interface=  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Cls-basic  [[elisp:(outline-show-subtree+toggle)][||]] /SystemdSeedInfo/  superClass=object =Abstraction of a  Interface=  [[elisp:(org-cycle)][| ]]
 #+end_org """
-class SocketSystemdSeedInfo(object):
+class SystemdSeedInfo(object):
 ####+END:
     """
 ** Abstraction of
@@ -104,20 +103,20 @@ class SocketSystemdSeedInfo(object):
     def __new__(cls):
         if cls._instance is None:
             # print('Creating the object')
-            cls._instance = super(SocketSystemdSeedInfo, cls).__new__(cls)
+            cls._instance = super(SystemdSeedInfo, cls).__new__(cls)
             # Put any initialization here.
         return cls._instance
 
     def __init__(
             self,
             seedType: str | None = None,
-            socketSysdUnitName: str | None = None,
-            socketSysdUnitFileFunc: typing.Callable | None = None,
+            sysdUnitName: str | None = None,
+            sysdUnitFileFunc: typing.Callable | None = None,
             examplesHook: typing.Callable | None =None,
     ):
         self._seedType = seedType
-        self._socketSysdUnitName = socketSysdUnitName
-        self._socketSysdUnitFileFunc = socketSysdUnitFileFunc
+        self._sysdUnitName = sysdUnitName
+        self._sysdUnitFileFunc = sysdUnitFileFunc
         self._examplesHook = examplesHook
 
     @property
@@ -130,21 +129,21 @@ class SocketSystemdSeedInfo(object):
 
 
     @property
-    def socketSysdUnitName(self) -> str | None:
-        return self._socketSysdUnitName
+    def sysdUnitName(self) -> str | None:
+        return self._sysdUnitName
 
-    @socketSysdUnitName.setter
-    def socketSysdUnitName(self, value: str | None,):
-        self._socketSysdUnitName = value
+    @sysdUnitName.setter
+    def sysdUnitName(self, value: str | None,):
+        self._sysdUnitName = value
 
 
     @property
-    def socketSysdUnitFileFunc(self) -> typing.Callable | None:
-        return self._socketSysdUnitFileFunc
+    def sysdUnitFileFunc(self) -> typing.Callable | None:
+        return self._sysdUnitFileFunc
 
-    @socketSysdUnitFileFunc.setter
-    def socketSysdUnitFileFunc(self, value: typing.Callable | None,):
-        self._socketSysdUnitFileFunc = value
+    @sysdUnitFileFunc.setter
+    def sysdUnitFileFunc(self, value: typing.Callable | None,):
+        self._sysdUnitFileFunc = value
 
     @property
     def examplesHook(self) -> typing.Callable | None:
@@ -155,7 +154,7 @@ class SocketSystemdSeedInfo(object):
         self._examplesHook = value
 
 
-systemdSeedInfo = SocketSystemdSeedInfo()
+systemdSeedInfo = SystemdSeedInfo()
 
 ####+BEGIN: bx:cs:py3:section :title "Public Functions"
 """ #+begin_org
@@ -171,17 +170,18 @@ systemdSeedInfo = SocketSystemdSeedInfo()
 def setup(
 ####+END:
         seedType: str | None = None,
-        socketSysdUnitName: str | None = None,
-        socketSysdUnitFileFunc: typing.Callable | None = None,
+        sysdUnitName: str | None = None,
+        sysdUnitFileFunc: typing.Callable | None = None,
         examplesHook: typing.Callable | None =None,
 ):
     """ #+begin_org
 ** [[elisp:(org-cycle)][| *DocStr | ]
     #+end_org """
     systemdSeedInfo.seedType  = seedType
-    systemdSeedInfo.socketSysdUnitName  = socketSysdUnitName
-    systemdSeedInfo.socketSysdUnitFileFunc  = socketSysdUnitFileFunc
+    systemdSeedInfo.sysdUnitName  = sysdUnitName
+    systemdSeedInfo.sysdUnitFileFunc  = sysdUnitFileFunc
     systemdSeedInfo.examplesHook  = examplesHook
+
 
 ####+BEGIN: b:py3:cs:framework/endOfFile :basedOn "classification"
 """ #+begin_org
