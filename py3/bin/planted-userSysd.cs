@@ -9,14 +9,14 @@
 ####+END:
 
 """ #+begin_org
-* Panel::  [[file:/bisos/panels/bisos-apps/lcnt/lcntScreencasting/subTitles/_nodeBase_/fullUsagePanel-en.org]]
+* Panel::  [[file:/bisos/panels/bisos-apps/NOTYET/_nodeBase_/fullUsagePanel-en.org]]
 * Overview and Relevant Pointers
 #+end_org """
 
-from bisos import b
+# from bisos import b
 
 from bisos.debian import systemd_seedInfo
-from bisos.debian import systemd_seed
+from bisos.debian import systemd_seed as systemd_seed  # noqa
 
 def sysdUnitFileFunc():
     templateStr = """
@@ -36,7 +36,7 @@ WantedBy=default.target
 
 
 systemd_seedInfo.setup(
-    seedType="sysdSysUnit",  # or userUnit
+    seedType="sysdUserUnit",  # or userUnit
     sysdUnitName="facter",
     sysdUnitFileFunc=sysdUnitFileFunc,
 )
