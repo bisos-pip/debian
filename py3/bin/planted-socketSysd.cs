@@ -9,7 +9,7 @@
 ####+END:
 
 """ #+begin_org
-* Panel::  [[file:/bisos/panels/bisos-apps/lcnt/NOTYET/_nodeBase_/fullUsagePanel-en.org]]
+* Panel::  [[file:/bisos/panels/bisos-apps/NOTYET/_nodeBase_/fullUsagePanel-en.org]]
 * Overview and Relevant Pointers
 #+end_org """
 

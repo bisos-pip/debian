@@ -184,12 +184,15 @@ ExecStart=/usr/bin/stdbuf -i0 -o0 -e0 /bisos/venv/py3/dev-bisos3/bin/roPerf-fact
         seedType = systemd_seedInfo.systemdSeedInfo.seedType
 
         if seedType == "sysdSysUnit":
-            print(f"asRootWrite: destPath={destPath} -- contentStr={contentStr}")
+            print(f"asRootWrite: destPath={destPath} -- contentStr={contentStr} seedtype={seedType}")
             pyRunAs.as_root_writeToFile(destPath, contentStr)
         elif seedType == "sysdUserUnit":
             print(f"NOTYET write as current user.")
+        elif seedType == "sysdSocketUnit":
+            print(f"asRootWrite: destPath={destPath} -- contentStr={contentStr} seedtype={seedType}")
+            pyRunAs.as_root_writeToFile(destPath, contentStr)
         else:
-            b_eh.badUsage(f"NOTYET:: bad seed type")
+            print(f"NOTYET:: badUsage seedtype={seedType}")
 
 # if b.cs.G.plantOfThisSeed is not None:
 configFile_sysdUnit = ConfigFile_sysdUnit()
@@ -686,10 +689,10 @@ class SocketUnit(object):
             self,
     ) -> pathlib.Path:
         """ #+begin_org
-*** [[elisp:(org-cycle)][| DocStr| ]]  Look in control dir for file params.
+*** [[elisp:(org-cycle)][| DocStr| ]]  Socket files are stored in /lib/systemd/system on Debian 12
         #+end_org """
-        self._serviceFilePath = os.path.join("/etc/systemd/system", self.serviceName)
-        return pathlib.Path(f"{self._serviceFilePath}")
+        self._serviceFilePath = pathlib.Path("/lib/systemd/system") / self.serviceName
+        return self._serviceFilePath
 
 ####+BEGIN: b:py3:cs:method/typing :methodName "serviceFileVerify" :deco "default"
     """ #+begin_org
@@ -911,9 +914,11 @@ def makeSeedSysdUnit ():
         result = SysUnit(serviceName)
     elif seedType == "sysdUserUnit":
         result = UserUnit(serviceName)
+    elif seedType == "sysdSocketUnit":
+        result = SocketUnit(serviceName)
     else:
         # b_eh.badUsage(f"NOTYET:: bad seed type")
-        print(f"NOTYET:: bad seed type")
+        print(f"NOTYET:: badUsage seedtype={seedType}")
 
     return result
 
@@ -957,8 +962,10 @@ def examples_csu(
         examples_csuSysUnit()
     elif seedType == "sysdUserUnit":
         examples_csuUserUnit()
+    elif seedType == "sysdSocketUnit":
+        examples_csuSocketUnit()
     else:
-        b_eh.badUsage(f"NOTYET:: bad seed type")
+        print(f"NOTYET:: badUsage seedtype={seedType}")
 
     cs.examples.menuChapter('*NOTYET Facter Daemon Full Update*')
 
@@ -966,12 +973,12 @@ def examples_csu(
     # cps=cpsInit(); menuItem(verbosity='none') ; menuItem(verbosity='full')
 
 
-####+BEGIN: b:py3:cs:func/typing :funcName "examples_csuUserUnit" :funcType "eType" :retType "" :deco "default" :argsList ""
+####+BEGIN: b:py3:cs:func/typing :funcName "examples_csuUserUnit_OBSOLETED" :funcType "eType" :retType "" :deco "default" :argsList ""
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-eType  [[elisp:(outline-show-subtree+toggle)][||]] /examples_csuUserUnit/  deco=default  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-eType  [[elisp:(outline-show-subtree+toggle)][||]] /examples_csuUserUnit_OBSOLETED/  deco=default  [[elisp:(org-cycle)][| ]]
 #+end_org """
 @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
-def examples_csuUserUnit(
+def examples_csuUserUnit_OBSOLETED(
 ####+END:
         userUnitInstanceName: typing.AnyStr = '',
         sectionTitle: typing.AnyStr = '',
@@ -1027,6 +1034,123 @@ def examples_csuUserUnit(
     cmndName = "sysdUserUnit" ;  cmndArgs = "journalLogs"
     cps=cpsInit(); cps['cls'] = userUnitInstanceName ;  menuItem(verbosity='none')
 
+####+BEGIN: b:py3:cs:func/typing :funcName "examples_csuUserUnit" :funcType "eType" :retType "" :deco "default" :argsList ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-eType  [[elisp:(outline-show-subtree+toggle)][||]] /examples_csuUserUnit/  deco=default  [[elisp:(org-cycle)][| ]]
+#+end_org """
+@cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+def examples_csuUserUnit(
+####+END:
+        userUnitInstanceName: typing.AnyStr = '',
+        sectionTitle: typing.AnyStr = '',
+) -> None:
+    """ #+begin_org
+** [[elisp:(org-cycle)][| *DocStr | ] Examples of Service Access Instance Commands.
+    #+end_org """
+
+
+    od = collections.OrderedDict
+    cmnd = cs.examples.cmndEnter
+    literal = cs.examples.execInsert
+
+    if sectionTitle == 'default':
+        cs.examples.menuChapter('*Remote Operations Management*')
+
+    serviceName = systemd_seedInfo.systemdSeedInfo.sysdUnitName
+
+    cs.examples.menuChapter('*Systemd Unit Actions *')
+
+    cmnd('serviceFilePath', comment=" # ")
+
+    cmnd('sysdUserUnit', args='''serviceFileVerify''', comment=" # NOTYET")
+    cmnd('sysdUserUnit', args='''ensure''', comment=" # fileVerify + reload + restart + enable")
+    cmnd('sysdUserUnit', args='''remove''', comment=" # stop + disable + unlink")
+
+    cs.examples.menuChapter('*Systemctl Actions (sudo) *')
+
+    cmnd('sysdUserUnit', args='''reload''', comment=f" # systemctl reload {serviceName}")
+    cmnd('sysdUserUnit', args='''stop''', comment=f" # systemctl stop {serviceName}")
+    cmnd('sysdUserUnit', args='''start''', comment=f" # systemctl start {serviceName}")
+    cmnd('sysdUserUnit', args='''restart''', comment=f" # systemctl restart {serviceName}")
+    cmnd('sysdUserUnit', args='''enable''', comment=f" # systemctl enable {serviceName}")
+    cmnd('sysdUserUnit', args='''disable''', comment=f" # systemctl disable {serviceName}")
+
+    cs.examples.menuChapter('*Systemctl Information*')
+
+    cmnd('sysdUserUnit', args='''status''', comment=f" # systemctl status {serviceName}")
+    cmnd('sysdUserUnit', args='''show''', comment=f" # systemctl show {serviceName}")
+
+    cs.examples.menuChapter('*Journal Logs*')
+
+    cmnd('sysdUserUnit', args='''journalLogs''', comment=" # NOTYET")
+
+    cs.examples.menuChapter('*Journal Logs -- Literal Commands*')
+
+    literal(f"journalctl --list-boots", comment=" # NOTYET")
+    literal(f"journalctl -b", comment=" # NOTYET")
+    literal(f"journalctl -u {serviceName} --since today", comment=" # NOTYET")
+    literal(f"journalctl -u {serviceName} -n 200", comment=" # tail -200")
+    literal(f"journalctl -u {serviceName} -f", comment=" # tail -f")
+
+####+BEGIN: b:py3:cs:func/typing :funcName "examples_csuSocketUnit" :funcType "eType" :retType "" :deco "default" :argsList ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-T-eType  [[elisp:(outline-show-subtree+toggle)][||]] /examples_csuSocketUnit/  deco=default  [[elisp:(org-cycle)][| ]]
+#+end_org """
+@cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+def examples_csuSocketUnit(
+####+END:
+        userUnitInstanceName: typing.AnyStr = '',
+        sectionTitle: typing.AnyStr = '',
+) -> None:
+    """ #+begin_org
+** [[elisp:(org-cycle)][| *DocStr | ] Examples of Service Access Instance Commands.
+    #+end_org """
+
+
+    od = collections.OrderedDict
+    cmnd = cs.examples.cmndEnter
+    literal = cs.examples.execInsert
+
+    if sectionTitle == 'default':
+        cs.examples.menuChapter('*Remote Operations Management*')
+
+    serviceName = systemd_seedInfo.systemdSeedInfo.sysdUnitName
+
+    cs.examples.menuChapter('*Systemd Unit Actions *')
+
+    cmnd('serviceFilePath', comment=" # ")
+
+    cmnd('sysdSocketUnit', args='''serviceFileVerify''', comment=" # NOTYET")
+    cmnd('sysdSocketUnit', args='''ensure''', comment=" # fileVerify + reload + restart + enable")
+    cmnd('sysdSocketUnit', args='''remove''', comment=" # stop + disable + unlink")
+
+    cs.examples.menuChapter('*Systemctl Actions (sudo) *')
+
+    cmnd('sysdSocketUnit', args='''reload''', comment=f" # systemctl reload {serviceName}")
+    cmnd('sysdSocketUnit', args='''stop''', comment=f" # systemctl stop {serviceName}")
+    cmnd('sysdSocketUnit', args='''start''', comment=f" # systemctl start {serviceName}")
+    cmnd('sysdSocketUnit', args='''restart''', comment=f" # systemctl restart {serviceName}")
+    cmnd('sysdSocketUnit', args='''enable''', comment=f" # systemctl enable {serviceName}")
+    cmnd('sysdSocketUnit', args='''disable''', comment=f" # systemctl disable {serviceName}")
+
+    cs.examples.menuChapter('*Systemctl Information*')
+
+    cmnd('sysdSocketUnit', args='''status''', comment=f" # systemctl status {serviceName}")
+    cmnd('sysdSocketUnit', args='''show''', comment=f" # systemctl show {serviceName}")
+
+    cs.examples.menuChapter('*Journal Logs*')
+
+    cmnd('sysdSocketUnit', args='''journalLogs''', comment=" # NOTYET")
+
+    cs.examples.menuChapter('*Journal Logs -- Literal Commands*')
+
+    literal(f"journalctl --list-boots", comment=" # NOTYET")
+    literal(f"journalctl -b", comment=" # NOTYET")
+    literal(f"journalctl -u {serviceName} --since today", comment=" # NOTYET")
+    literal(f"journalctl -u {serviceName} -n 200", comment=" # tail -200")
+    literal(f"journalctl -u {serviceName} -f", comment=" # tail -f")
+
+
 
 ####+BEGIN: b:py3:cs:func/typing :funcName "examples_csuSysUnit" :funcType "eType" :retType "" :deco "default" :argsList ""
 """ #+begin_org
@@ -1041,7 +1165,6 @@ def examples_csuSysUnit(
     """ #+begin_org
 ** [[elisp:(org-cycle)][| *DocStr | ] Examples of Service Access Instance Commands.
     #+end_org """
-
 
     od = collections.OrderedDict
     cmnd = cs.examples.cmndEnter
@@ -1210,12 +1333,72 @@ class sysdSysUnit(cs.Cmnd):
 
         return cmndArgsSpecDict
 
-
-####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "sysdUserUnit" :extent "verify" :parsMand "cls" :parsOpt "" :argsMin 1 :argsMax 9999 :pyInv ""
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "sysdUserUnit" :extent "verify" :parsMand "" :parsOpt "" :argsMin 1 :argsMax 9999 :pyInv ""
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<sysdUserUnit>>  =verify= parsMand=cls argsMin=1 argsMax=9999 ro=cli   [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<sysdUserUnit>>  =verify= argsMin=1 argsMax=9999 ro=cli   [[elisp:(org-cycle)][| ]]
 #+end_org """
 class sysdUserUnit(cs.Cmnd):
+    cmndParamsMandatory = [ ]
+    cmndParamsOptional = [ ]
+    cmndArgsLen = {'Min': 1, 'Max': 9999,}
+
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmnd(self,
+             rtInv: cs.RtInvoker,
+             cmndOutcome: b.op.Outcome,
+             argsList: typing.Optional[list[str]]=None,  # CsArgs
+    ) -> b.op.Outcome:
+
+        failed = b_io.eh.badOutcome
+        callParamsDict = {}
+        if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, argsList).isProblematic():
+            return failed(cmndOutcome)
+        cmndArgsSpecDict = self.cmndArgsSpec()
+####+END:
+        self.cmndDocStr(f""" #+begin_org
+** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
+        #+end_org """)
+
+        cmndArgsSpecDict = self.cmndArgsSpec()
+
+        action = self.cmndArgsGet("0", cmndArgsSpecDict, argsList)
+
+        print(f"Action {action}")
+
+        serviceName = systemd_seedInfo.systemdSeedInfo.sysdUnitName
+
+        thisCls = UserUnit(serviceName)
+
+        getattr(thisCls, f"{action}")()
+
+        return cmndOutcome
+
+####+BEGIN: b:py3:cs:method/args :methodName "cmndArgsSpec" :methodType "anyOrNone" :retType "bool" :deco "default" :argsList "self"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-anyOrNone [[elisp:(outline-show-subtree+toggle)][||]] /cmndArgsSpec/ deco=default  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmndArgsSpec(self, ):
+####+END:
+        """  #+begin_org
+** [[elisp:(org-cycle)][| *cmndArgsSpec:* | ]]
+        #+end_org """
+        cmndArgsSpecDict = cs.arg.CmndArgsSpecDict()
+        cmndArgsSpecDict.argsDictAdd(
+            argPosition="0",
+            argName="action",
+            argChoices=[],
+            argDescription="Action to be specified by each"
+        )
+
+        return cmndArgsSpecDict
+
+
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "sysdUserUnit_OBSOLETED" :extent "verify" :parsMand "cls" :parsOpt "" :argsMin 1 :argsMax 9999 :pyInv ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<sysdUserUnit_OBSOLETED>>  =verify= parsMand=cls argsMin=1 argsMax=9999 ro=cli   [[elisp:(org-cycle)][| ]]
+#+end_org """
+class sysdUserUnit_OBSOLETED(cs.Cmnd):
     cmndParamsMandatory = [ 'cls', ]
     cmndParamsOptional = [ ]
     cmndArgsLen = {'Min': 1, 'Max': 9999,}
@@ -1228,9 +1411,10 @@ class sysdUserUnit(cs.Cmnd):
              argsList: typing.Optional[list[str]]=None,  # CsArgs
     ) -> b.op.Outcome:
 
+        failed = b_io.eh.badOutcome
         callParamsDict = {'cls': cls, }
         if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, argsList).isProblematic():
-            return b_io.eh.badOutcome(cmndOutcome)
+            return failed(cmndOutcome)
         cmndArgsSpecDict = self.cmndArgsSpec()
         cls = csParam.mappedValue('cls', cls)
 ####+END:
@@ -1269,6 +1453,66 @@ class sysdUserUnit(cs.Cmnd):
 
         return cmndArgsSpecDict
 
+
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "sysdSocketUnit" :extent "verify" :parsMand "" :parsOpt "" :argsMin 1 :argsMax 9999 :pyInv ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<sysdSocketUnit>>  =verify= argsMin=1 argsMax=9999 ro=cli   [[elisp:(org-cycle)][| ]]
+#+end_org """
+class sysdSocketUnit(cs.Cmnd):
+    cmndParamsMandatory = [ ]
+    cmndParamsOptional = [ ]
+    cmndArgsLen = {'Min': 1, 'Max': 9999,}
+
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmnd(self,
+             rtInv: cs.RtInvoker,
+             cmndOutcome: b.op.Outcome,
+             argsList: typing.Optional[list[str]]=None,  # CsArgs
+    ) -> b.op.Outcome:
+
+        failed = b_io.eh.badOutcome
+        callParamsDict = {}
+        if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, argsList).isProblematic():
+            return failed(cmndOutcome)
+        cmndArgsSpecDict = self.cmndArgsSpec()
+####+END:
+        self.cmndDocStr(f""" #+begin_org
+** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Return a dict of parName:parValue as results
+        #+end_org """)
+
+        cmndArgsSpecDict = self.cmndArgsSpec()
+
+        action = self.cmndArgsGet("0", cmndArgsSpecDict, argsList)
+
+        print(f"Action {action}")
+
+        serviceName = systemd_seedInfo.systemdSeedInfo.sysdUnitName
+
+        thisCls = SocketUnit(serviceName)
+
+        getattr(thisCls, f"{action}")()
+
+        return cmndOutcome
+
+####+BEGIN: b:py3:cs:method/args :methodName "cmndArgsSpec" :methodType "anyOrNone" :retType "bool" :deco "default" :argsList "self"
+    """ #+begin_org
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Mtd-T-anyOrNone [[elisp:(outline-show-subtree+toggle)][||]] /cmndArgsSpec/ deco=default  deco=default  [[elisp:(org-cycle)][| ]]
+    #+end_org """
+    @cs.track(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmndArgsSpec(self, ):
+####+END:
+        """  #+begin_org
+** [[elisp:(org-cycle)][| *cmndArgsSpec:* | ]]
+        #+end_org """
+        cmndArgsSpecDict = cs.arg.CmndArgsSpecDict()
+        cmndArgsSpecDict.argsDictAdd(
+            argPosition="0",
+            argName="action",
+            argChoices=[],
+            argDescription="Action to be specified by each"
+        )
+
+        return cmndArgsSpecDict
 
     
 ####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "serviceFilePath" :extent "verify" :parsMand "" :parsOpt "" :argsMin 0 :argsMax 0 :pyInv ""
@@ -1314,11 +1558,11 @@ class serviceFilePath(cs.Cmnd):
         )
 
 
-####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "facterDaemonFullUpdate" :extent "verify" :parsMand "" :parsOpt "" :argsMin 0 :argsMax 0 :pyInv ""
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "facterDaemonFullUpdate_OBSOLETED" :extent "verify" :parsMand "" :parsOpt "" :argsMin 0 :argsMax 0 :pyInv ""
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<facterDaemonFullUpdate>>  =verify= ro=cli   [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<facterDaemonFullUpdate_OBSOLETED>>  =verify= ro=cli   [[elisp:(org-cycle)][| ]]
 #+end_org """
-class facterDaemonFullUpdate(cs.Cmnd):
+class facterDaemonFullUpdate_OBSOLETED(cs.Cmnd):
     cmndParamsMandatory = [ ]
     cmndParamsOptional = [ ]
     cmndArgsLen = {'Min': 0, 'Max': 0,}
