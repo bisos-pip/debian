@@ -24,10 +24,6 @@ Table of Contents TOC
 =====================
 
 -  `Overview <#overview>`__
--  `About BISOS — ByStar Internet Services Operating
-   System <#about-bisos-----bystar-internet-services-operating-system>`__
--  `bisos.debian is a Command Services (PyCS)
-   Facility <#bisosdebian-is-a-command-services-pycs-facility>`__
 -  `Uses of bisos.debian <#uses-of-bisosdebian>`__
 -  `bisos.debian as a Standalone Piece of
    BISOS <#bisosdebian-as-a-standalone-piece-of-bisos>`__
@@ -36,68 +32,11 @@ Table of Contents TOC
    -  `With pip <#with-pip>`__
    -  `With pipx <#with-pipx>`__
 
--  `Usage <#usage>`__
-
-   -  `Locally (system command-line) <#locally-system-command-line>`__
-   -  `Remotely (as a service –
-      Performer+Invoker) <#remotely-as-a-service----performerinvoker>`__
-
-      -  `Performer <#performer>`__
-      -  `Invoker <#invoker>`__
-
-   -  `Use by Python script <#use-by-python-script>`__
-
-      -  `bisos.debian Source Code is in writen in COMEEGA
-         (Collaborative Org-Mode Enhanced Emacs Generalized Authorship)
-         – <#bisosdebian-source-code-is-in-writen-in-comeega-collaborative-org-mode-enhanced-emacs-generalized-authorship----httpsgithubcombx-bleecomeega>`__\ https://github.com/bx-blee/comeega\ `. <#bisosdebian-source-code-is-in-writen-in-comeega-collaborative-org-mode-enhanced-emacs-generalized-authorship----httpsgithubcombx-bleecomeega>`__
-      -  `The primary API for bisos.debian is
-         ./bisos/debian/debian-csu.py. It is self documented in
-         COMEEGA. <#the-primary-api-for-bisosdebian-is-bisosdebiandebian-csupy-it-is-self-documented-in-comeega>`__
-
 -  `Documentation and Blee-Panels <#documentation-and-blee-panels>`__
 
    -  `bisos.debian Blee-Panels <#bisosdebian-blee-panels>`__
 
 -  `Support <#support>`__
-
-About BISOS — ByStar Internet Services Operating System
-=======================================================
-
-Layered on top of Debian, **BISOS**: (By\* Internet Services Operating
-System) is a unified and universal framework for developing both
-internet services and software-service continuums that use internet
-services. See `Bootstrapping ByStar, BISOS and
-Blee <https://github.com/bxGenesis/start>`__ for information about
-getting started with BISOS.
-
-*bisos.debian* as a PyCS facility is a small piece of a much bigger
-picture. **BISOS** is a foundation for **The Libre-Halaal ByStar Digital
-Ecosystem** which is described as a cure for losses of autonomy and
-privacy that we are experiencing in a book titled: `Nature of
-Polyexistentials <https://github.com/bxplpc/120033>`__
-
-bisos.debian is a Command Services (PyCS) Facility
-==================================================
-
-bisos.debian can be used locally on command-line or remotely as a
-service. bisos.debian is a PyCS multi-unit command-service. PyCS is a
-framework that converges developement of CLI and Services. PyCS is an
-alternative to FastAPI, Typer and Click.
-
-bisos.debian uses the PyCS Framework to:
-
-#. Provide access to debian facilities through native python.
-#. Provide local access to debian facilities on CLI.
-#. Provide remote access to debian facilities through remote invocation
-   of python Expection Complete Operations using
-   `rpyc <https://github.com/tomerfiliba-org/rpyc>`__.
-#. Provide remote access to debian facilities on CLI.
-
-What is unique in the PyCS-Framework is that these four models are all a
-single abstraction.
-
-The core of PyCS-Framework is the *bisos.b* package (the
-PyCS-Foundation). See https://github.com/bisos-pip/b for an overview.
 
 Uses of bisos.debian
 ====================
@@ -147,53 +86,6 @@ The following commands are made available:
 -  debian.cs
 -  roInv-debian.cs
 -  roPerf-debian.cs
-
-These are all one file with 3 names. *roInv-debian.cs* and
-*roPerf-debian.cs* are sym-links to *debian.cs*
-
-Usage
-=====
-
-Locally (system command-line)
------------------------------
-
-``debian.cs`` can be invoked directly as
-
-.. code:: bash
-
-   bin/debian.cs
-
-Remotely (as a service – Performer+Invoker)
--------------------------------------------
-
-You can also run
-
-Performer
-~~~~~~~~~
-
-Run performer as:
-
-.. code:: bash
-
-   bin/roPerf-debian.cs
-
-Invoker
-~~~~~~~
-
-Run invoker as:
-
-.. code:: bash
-
-   bin/roInv-debian.cs
-
-Use by Python script
---------------------
-
-bisos.debian Source Code is in writen in COMEEGA (Collaborative Org-Mode Enhanced Emacs Generalized Authorship) – https://github.com/bx-blee/comeega.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The primary API for bisos.debian is ./bisos/debian/debian-csu.py. It is self documented in COMEEGA.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Documentation and Blee-Panels
 =============================

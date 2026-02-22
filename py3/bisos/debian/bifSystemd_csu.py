@@ -435,7 +435,7 @@ class SysUnit(object):
     ):
         log.info(f"Journal Logs {self.serviceName}")
         if b.subProc.Op(outcome=None, log=1).bash(
-                f"""journalctl -u {self.serviceName} | tail -200""",
+                f"""journalctl --no-pager -u {self.serviceName} | tail -200""",
         ).isProblematic():  return(None)
 
 
@@ -650,7 +650,7 @@ class UserUnit(object):
     ):
         log.info(f"Journal Logs {self.serviceName}")
         if b.subProc.Op(outcome=None, log=1).bash(
-                f"""journalctl --user -u {self.serviceName} | tail -200""",
+                f"""journalctl --no-pager --user -u {self.serviceName} | tail -200""",
         ).isProblematic():  return(None)
 
 
@@ -892,7 +892,7 @@ class SocketUnit(object):
     ):
         log.info(f"Journal Logs {self.serviceName}")
         if b.subProc.Op(outcome=None, log=1).bash(
-                f"""journalctl -u {self.serviceName} | tail -200""",
+                f"""journalctl --no-pager -u {self.serviceName} | tail -200""",
         ).isProblematic():  return(None)
 
 
@@ -1086,11 +1086,11 @@ def examples_csuUserUnit(
 
     cs.examples.menuChapter('*Journal Logs -- Literal Commands*')
 
-    literal(f"journalctl --list-boots", comment=" # NOTYET")
-    literal(f"journalctl -b", comment=" # NOTYET")
-    literal(f"journalctl -u {serviceName} --since today", comment=" # NOTYET")
-    literal(f"journalctl -u {serviceName} -n 200", comment=" # tail -200")
-    literal(f"journalctl -u {serviceName} -f", comment=" # tail -f")
+    literal(f"journalctl --no-pager --list-boots", comment=" # NOTYET")
+    literal(f"journalctl --no-pager -b", comment=" # NOTYET")
+    literal(f"journalctl --no-pager -u {serviceName} --since today", comment=" # NOTYET")
+    literal(f"journalctl --no-pager -u {serviceName} -n 200", comment=" # tail -200")
+    literal(f"journalctl --no-pager -u {serviceName} -f", comment=" # tail -f")
 
 ####+BEGIN: b:py3:cs:func/typing :funcName "examples_csuSocketUnit" :funcType "eType" :retType "" :deco "default" :argsList ""
 """ #+begin_org
@@ -1144,12 +1144,11 @@ def examples_csuSocketUnit(
 
     cs.examples.menuChapter('*Journal Logs -- Literal Commands*')
 
-    literal(f"journalctl --list-boots", comment=" # NOTYET")
-    literal(f"journalctl -b", comment=" # NOTYET")
-    literal(f"journalctl -u {serviceName} --since today", comment=" # NOTYET")
-    literal(f"journalctl -u {serviceName} -n 200", comment=" # tail -200")
-    literal(f"journalctl -u {serviceName} -f", comment=" # tail -f")
-
+    literal(f"journalctl --no-pager --list-boots", comment=" # NOTYET")
+    literal(f"journalctl --no-pager --b", comment=" # NOTYET")
+    literal(f"journalctl --no-pager -u {serviceName} --since today", comment=" # NOTYET")
+    literal(f"journalctl --no-pager -u {serviceName} -n 200", comment=" # tail -200")
+    literal(f"journalctl --no-pager -u {serviceName} -f", comment=" # tail -f")
 
 
 ####+BEGIN: b:py3:cs:func/typing :funcName "examples_csuSysUnit" :funcType "eType" :retType "" :deco "default" :argsList ""
@@ -1203,11 +1202,11 @@ def examples_csuSysUnit(
 
     cs.examples.menuChapter('*Journal Logs -- Literal Commands*')
 
-    literal(f"journalctl --list-boots", comment=" # NOTYET")
-    literal(f"journalctl -b", comment=" # NOTYET")
-    literal(f"journalctl -u {serviceName} --since today", comment=" # NOTYET")
-    literal(f"journalctl -u {serviceName} -n 200", comment=" # tail -200")
-    literal(f"journalctl -u {serviceName} -f", comment=" # tail -f")
+    literal(f"journalctl --no-pager --list-boots", comment=" # NOTYET")
+    literal(f"journalctl --no-pager -b", comment=" # NOTYET")
+    literal(f"journalctl --no-pager -u {serviceName} --since today", comment=" # NOTYET")
+    literal(f"journalctl --no-pager -u {serviceName} -n 200", comment=" # tail -200")
+    literal(f"journalctl --no-pager -u {serviceName} -f", comment=" # tail -f")
 
 ####+BEGIN: blee:bxPanel:foldingSection :outLevel 0 :sep nil :title "CmndSvcs" :anchor ""  :extraInfo "File Parameters Get/Set -- Commands"
 """ #+begin_org
