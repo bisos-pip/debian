@@ -112,12 +112,16 @@ class SystemdSeedInfo(object):
             seedType: str | None = None,
             sysdUnitName: str | None = None,
             sysdUnitFileFunc: typing.Callable | None = None,
-            examplesHook: typing.Callable | None =None,
+            examplesHook: typing.Callable | None = None,
+            preFunc: typing.Callable | None = None,
+            postFunc: typing.Callable | None = None,
     ):
         self._seedType = seedType
         self._sysdUnitName = sysdUnitName
         self._sysdUnitFileFunc = sysdUnitFileFunc
         self._examplesHook = examplesHook
+        self._preFunc = preFunc
+        self._postFunc = postFunc
 
     @property
     def seedType(self) -> str | None:
@@ -153,6 +157,22 @@ class SystemdSeedInfo(object):
     def examplesHook(self, value: typing.Callable | None,):
         self._examplesHook = value
 
+    @property
+    def preFunc(self) -> typing.Callable | None:
+        return self._preFunc
+
+    @preFunc.setter
+    def preFunc(self, value: typing.Callable | None,):
+        self._preFunc = value
+
+    @property
+    def postFunc(self) -> typing.Callable | None:
+        return self._postFunc
+
+    @postFunc.setter
+    def postFunc(self, value: typing.Callable | None,):
+        self._postFunc = value
+
 
 systemdSeedInfo = SystemdSeedInfo()
 
@@ -172,7 +192,9 @@ def setup(
         seedType: str | None = None,
         sysdUnitName: str | None = None,
         sysdUnitFileFunc: typing.Callable | None = None,
-        examplesHook: typing.Callable | None =None,
+        examplesHook: typing.Callable | None = None,
+        preFunc: typing.Callable | None = None,
+        postFunc: typing.Callable | None = None,
 ):
     """ #+begin_org
 ** [[elisp:(org-cycle)][| *DocStr | ]
@@ -181,6 +203,8 @@ def setup(
     systemdSeedInfo.sysdUnitName  = sysdUnitName
     systemdSeedInfo.sysdUnitFileFunc  = sysdUnitFileFunc
     systemdSeedInfo.examplesHook  = examplesHook
+    systemdSeedInfo.preFunc  = preFunc
+    systemdSeedInfo.postFunc  = postFunc
 
 
 ####+BEGIN: b:py3:cs:framework/endOfFile :basedOn "classification"

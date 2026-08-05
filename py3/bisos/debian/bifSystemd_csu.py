@@ -273,12 +273,20 @@ class SysUnit(object):
             enable=True,
     ):
 
+        preFunc = systemd_seedInfo.systemdSeedInfo.preFunc
+        if preFunc is not None:
+            preFunc()
+
         self.serviceFileVerify()
         self.reload()
         if restart:
             self.restart()
         if enable:
             self.enable()
+
+        postFunc = systemd_seedInfo.systemdSeedInfo.postFunc
+        if postFunc is not None:
+            postFunc()
 
 ####+BEGIN: b:py3:cs:method/typing :methodName "remove" :deco "default"
     """ #+begin_org

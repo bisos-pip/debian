@@ -36,86 +36,140 @@
 * [[elisp:(show-all)][(>]]  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_  _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_       [[elisp:(outline-show-subtree+toggle)][| *Overview and Use Cases:* |]] <<Panel>>   /::BISOS IF to Debian Systemd::/  [[elisp:(org-shifttab)][<)]] E|
 ####+END
 ** +
-** BISOS Python Command-Services for interfacing with debain Systemd.
+** BISOS Python Command-Services for interfacing with Debian systemd.
+** Each service is specified by a =*-sysd.pcs= planted file that defines the unit file content
+** and lifecycle hooks. The seed commands write, enable, and manage the systemd unit.
 ** -B|
 
-* Architecture Overview
+####+BEGIN: blee:bxPanel:foldingSection :outLevel 1 :sep t :title "Architecture: 3-Layer Seed/Plantation Pattern" :anchor "Architecture" :extraInfo ""
+* /[[elisp:(beginning-of-buffer)][|^]]  [[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]] [[elisp:(delete-other-windows)][|1]]/
+* [[elisp:(show-all)][(>]]  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_  _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_       [[elisp:(outline-show-subtree+toggle)][| *Architecture: 3-Layer Seed/Plantation Pattern:* |]] <<Architecture>>   [[elisp:(org-shifttab)][<)]] E|
+####+END
+** +
+** Layer 1: Configuration Definition Layer (=-*-sysd.pcs=)
+   - Defines a =sysdUnitFileFunc()= that returns the systemd INI-format unit file as a string
+   - Optionally defines =preFunc()= and/or =postFunc()= callables (Python-level lifecycle hooks)
+   - Calls =systemd_seedInfo.setup()= to register all metadata into the singleton
+   - Example skeleton:
+     #+begin_src python
+     from bisos.debian import systemd_seedInfo
+     from bisos.debian import systemd_seed as systemd_seed  # noqa
+     from bisos.basics import pathPlus
 
-The system uses a *3-layer seed/plantation pattern*:
-
-** Layer 1: Configuration Definition Layer (~planted-socketSysd.cs~)
-   - Defines a ~sysdUnitFileFunc()~ that returns a hardcoded INI-format template:
-     #+begin_src ini
+     def sysdUnitFileFunc() -> str | None:
+         if (execPath := pathPlus.whichBinPath("myservice")) is None: return None
+         return f"""
      [Unit]
-     Description=gunicorn socket
-     [Socket]
-     ListenStream=/run/gunicorn.sock
+     Description=My Service
+     After=network.target
+     [Service]
+     ExecStart={execPath} --flag
+     Restart=on-failure
      [Install]
-     WantedBy=sockets.target
+     WantedBy=multi-user.target
+     """
+
+     def preFunc():
+         pass  # runs before ensure() enable+start; closes over .pcs context
+
+     def postFunc():
+         pass  # runs after ensure() enable+start; closes over .pcs context
+
+     systemd_seedInfo.setup(
+         seedType="sysdSysUnit",
+         sysdUnitName="myservice",
+         sysdUnitFileFunc=sysdUnitFileFunc,
+         preFunc=preFunc,
+         postFunc=postFunc,
+     )
      #+end_src
-   - Calls ~systemd_seedInfo.setup()~ to register this metadata into the singleton
-   - This is the *seed* - the definition of what should be created
 
-** Layer 2: Metadata Storage Layer (~systemd_seedInfo.py~)
-   - ~SystemdSeedInfo~ is a *singleton* class that stores configuration metadata
-   - It holds 4 key properties:
-     - ~seedType~ - the type of unit (e.g., ~"sysdSysUnit"~, ~"sysdUserUnit"~, or potentially ~"sysdSocketUnit"~)
-     - ~sysdUnitName~ - the name/identifier of the unit
-     - ~sysdUnitFileFunc~ - a callable that returns the systemd file content as a template string
-     - ~examplesHook~ - a hook for providing usage examples
-   - Acts as the *information registry* that seeds populate
+** Layer 2: Metadata Storage Layer (=systemd_seedInfo.py=)
+   - =SystemdSeedInfo= is a *singleton* holding all configuration metadata registered by a =.pcs= file
+   - Current properties:
 
-** Layer 3: Processing/Implementation Layer (~bifSystemd_csu.py~)
-   - ~ConfigFile_sysdUnit~ class reads from the singleton:
-     - Calls ~systemd_seedInfo.systemdSeedInfo.sysdUnitFileFunc()~ to get the template
-     - Writes the result to ~/etc/systemd/system/{name}.socket~ (or ~.service~)
-   - ~SysUnit~ class provides systemd management operations:
-     - ~__init__(name, type="service")~ - accepts type parameter (defaults to "service")
-     - ~serviceFilePath()~ - constructs path as ~/etc/systemd/system/{name}.{type}~
-     - ~ensure()~ - writes file, reloads daemon, restarts, and enables
-     - ~reload()~, ~start()~, ~stop()~, ~restart()~, ~enable()~, ~disable()~ - systemctl wrappers
+     | Property          | Type               | Purpose                                                   |
+     |-------------------+--------------------+-----------------------------------------------------------|
+     | =seedType=        | =str \| None=      | Unit class: ="sysdSysUnit"=, ="sysdUserUnit"=, etc.       |
+     | =sysdUnitName=    | =str \| None=      | Base name of the unit (without =.service= suffix)         |
+     | =sysdUnitFileFunc= | =Callable \| None= | Returns the systemd unit file content as a string         |
+     | =examplesHook=    | =Callable \| None= | Hook for providing usage examples in the seed             |
+     | =preFunc=         | =Callable \| None= | Called at Python level *before* enable+start in =ensure()= |
+     | =postFunc=        | =Callable \| None= | Called at Python level *after* enable+start in =ensure()=  |
+
+** Layer 3: Processing/Implementation Layer (=bifSystemd_csu.py=)
+   - =ConfigFile_sysdUnit= reads =sysdUnitFileFunc()= and writes the unit file to
+     =/etc/systemd/system/{name}.service= via the =configFile= pattern (=--cls=configFile_sysdUnit=)
+   - =SysUnit= class provides systemd management operations:
+     - =ensure()= — writes file, calls =preFunc=, reloads daemon, restarts, enables, calls =postFunc=
+     - =reload()=, =start()=, =stop()=, =restart()=, =enable()=, =disable()= — =systemctl= wrappers
+   - =UserUnit= and =SocketUnit= follow the same class structure but manage user-scope and socket units respectively
 
 ** Data Flow
 
    #+begin_src
-   planted-socketSysd.cs → systemd_seedInfo (storage) → bifSystemd_csu.py
-#+end_src
+   *-sysd.pcs  →  systemd_seedInfo (singleton registry)  →  bifSystemd_csu (write + manage)
+   #+end_src
 
-* Debian 12 Automatic Symlink Creation by systemd
+** -B|
 
-** When `systemctl enable` is run:
-   - It reads the [Install] section of the unit file
-   - For ~WantedBy=sockets.target~, it automatically creates a symlink in:
-     =/etc/systemd/system/sockets.target.wants/{name}.socket=
-   - Pointing to the actual unit file location
-
-** Key Finding from Documentation:
-
-   #+begin_quote
-   "A symbolic link is created in the .wants/ or .requires/ directory
-   of each of the listed units when this unit is installed by systemctl enable."
-   #+end_quote
-
-** This means:
-   1. Socket file lives in: =/lib/systemd/system/gunicornSocket.socket=
-   2. Systemd automatically manages the symlink: =/etc/systemd/system/sockets.target.wants/gunicornSocket.socket=
-   3. The symlink is created by =systemctl enable= (no manual symlink creation needed)
-   4. The symlink is removed by =systemctl disable=
-
-** Implication for SocketUnit Implementation:
-   - We do NOT need to manually create symlinks with pathlib
-   - We do NOT need to manually manage symlink lifecycle in =ensure()= or =remove()=
-   - The unit file's [Install] section with ~WantedBy=sockets.target~ is sufficient
-   - =systemctl enable/disable= handles all symlink operations automatically
-
-* +
-* -B|
-####+BEGIN: blee:bxPanel:foldingSection :outLevel 1 :sep t :title "systemd CSXUs TODOs" :anchor "" :extraInfo ""
+####+BEGIN: blee:bxPanel:foldingSection :outLevel 1 :sep t :title "Pre/Post Hook Semantics" :anchor "Hooks" :extraInfo ""
 * /[[elisp:(beginning-of-buffer)][|^]]  [[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]] [[elisp:(delete-other-windows)][|1]]/
-* [[elisp:(show-all)][(>]]  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_  _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_       [[elisp:(outline-show-subtree+toggle)][| *systemd CSXUs TODOs:* |]]    [[elisp:(org-shifttab)][<)]] E|
+* [[elisp:(show-all)][(>]]  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_  _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_       [[elisp:(outline-show-subtree+toggle)][| *Pre/Post Hook Semantics:* |]] <<Hooks>>   [[elisp:(org-shifttab)][<)]] E|
+####+END
+** +
+** Pre/post hooks are *Python-level* callables, not systemd units.
+** They are invoked by =SysUnit.ensure()= during the Python execution of the seed:
+   - =preFunc()= is called *before* =serviceFileVerify / reload / restart / enable=
+   - =postFunc()= is called *after* the full enable+start sequence completes
+** Hooks receive *no arguments*. The =.pcs= file closes over whatever context it needs.
+
+** Intended use cases:
+   - Creating directories or config files that =ExecStart= reads on first launch
+   - Setting permissions on paths before the service starts
+   - Recording that a preparation step has occurred (e.g. via a flag file)
+
+** What hooks are NOT for:
+   - Persistent side effects that should survive reboots — use a dedicated =Type=oneshot=
+     systemd unit with =RemainAfterExit=yes= for those (e.g. =airflow-db-sysd.pcs=
+     running =airflow db migrate=)
+   - Anything that systemd itself should track or order — put it in a unit with
+     =Requires== / =After== dependencies instead
+
+** Distinction: Python hook vs. systemd oneshot
+   | Criterion              | =preFunc= hook                    | Dedicated oneshot unit              |
+   |------------------------+-----------------------------------+-------------------------------------|
+   | Recorded by systemd    | No                                | Yes (journal + RemainAfterExit)     |
+   | Survives reboots       | No (runs only at =ensure= time)   | Yes (systemd tracks completion)     |
+   | Ordering with other units | Not visible to systemd         | Declared via =Requires= / =After=   |
+   | Use case               | ExecStart preparations            | DB migration, initialisation tasks  |
+
+** -B|
+
+####+BEGIN: blee:bxPanel:foldingSection :outLevel 1 :sep t :title "Systemd Symlink Lifecycle" :anchor "Symlinks" :extraInfo ""
+* /[[elisp:(beginning-of-buffer)][|^]]  [[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]] [[elisp:(delete-other-windows)][|1]]/
+* [[elisp:(show-all)][(>]]  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_  _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_       [[elisp:(outline-show-subtree+toggle)][| *Systemd Symlink Lifecycle:* |]] <<Symlinks>>   [[elisp:(org-shifttab)][<)]] E|
+####+END
+** +
+** =systemctl enable= reads the =[Install]= section of the unit file.
+** For =WantedBy=multi-user.target=, it automatically creates a symlink in:
+**   =/etc/systemd/system/multi-user.target.wants/{name}.service=
+** =systemctl disable= removes the symlink. Neither requires manual =pathlib= management.
+
+** Key implication:
+   - The unit file's =[Install]= section with =WantedBy= is sufficient
+   - =SysUnit.ensure()= and =SysUnit.remove()= do not need to manage symlinks manually
+   - Same applies to =UserUnit= and =SocketUnit= (=sockets.target.wants/=)
+
+** -B|
+
+####+BEGIN: blee:bxPanel:foldingSection :outLevel 1 :sep t :title "systemd CSXUs TODOs" :anchor "TODOs" :extraInfo ""
+* /[[elisp:(beginning-of-buffer)][|^]]  [[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]] [[elisp:(delete-other-windows)][|1]]/
+* [[elisp:(show-all)][(>]]  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_  _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_       [[elisp:(outline-show-subtree+toggle)][| *systemd CSXUs TODOs:* |]] <<TODOs>>   [[elisp:(org-shifttab)][<)]] E|
 ####+END
 ** +
 ** DONE Create a bisos.systemd manager package --- https://github.com/torfsen/python-systemd-tutorial
+** DONE Add preFunc/postFunc hooks to SystemdSeedInfo and SysUnit.ensure()
 ** TODO Use bisos account -- See tutorial above
 ** TODO Run system unit as user bisos -- See tutorial above
 ** TODO Add Environment=PYTHONUNBUFFERED=1
