@@ -158,7 +158,7 @@ ExecStart=/usr/bin/stdbuf -i0 -o0 -e0 /bisos/venv/py3/dev-bisos3/bin/roPerf-fact
         sysdUnitFileFunc = systemd_seedInfo.systemdSeedInfo.sysdUnitFileFunc
 
         if sysdUnitFileFunc is None:
-            print(f"EH_problem Missing systemd_seedInfo.systemdSeedInfo.sysdUnitFileFunc")
+            print(f"LOG-INFO: configFileStr:: Missing systemd_seedInfo.systemdSeedInfo.sysdUnitFileFunc")
             return None
 
         templateStr = sysdUnitFileFunc()
@@ -177,6 +177,12 @@ ExecStart=/usr/bin/stdbuf -i0 -o0 -e0 /bisos/venv/py3/dev-bisos3/bin/roPerf-fact
         """ #+begin_org
 *** [[elisp:(org-cycle)][| DocStr| ]]  Look in control dir for file params.
         #+end_org """
+
+        sysdUnitFileFunc = systemd_seedInfo.systemdSeedInfo.sysdUnitFileFunc
+
+        if sysdUnitFileFunc is None:
+            print(f"LOG-INFO: configFileUpdate:: Missing systemd_seedInfo.systemdSeedInfo.sysdUnitFileFunc")
+            return None
 
         contentStr = self.configFileStr()
         destPath = self.configFilePath()
